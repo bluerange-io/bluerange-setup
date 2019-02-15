@@ -1,0 +1,120 @@
+version: '2'
+services:
+
+  bluerange:
+    env_file:
+      - './server.env'
+    environment:
+      - 'HOSTNAME=https://$${HOST}'
+      - 'TZ=UTC'
+      - 'DATABASE_TYPE=mariadb'
+      - 'DATABASE_URL=jdbc:mariadb://database/bluerange?useServerPrepStmts=true'
+      - 'DATABASE_USER=bluerange'
+      - 'DATABASE_PWD=bluerange-database-pwd-change-me'
+      - 'MONGO_DATABASE=bluerange'
+      - 'MONGO_HOST=mongodb'
+      - 'MONGO_PORT=27017'
+      - 'MQTT_ENABLED=true'
+      - 'MQTT_SERVER_URIS=ssl://$${HOST}:8884,wss://$${HOST}:9002'
+      - 'ORGA_NAME=iot'
+      - 'ORGA_FULLNAME=IOT'
+      - 'ORGA_ADMIN_USERNAME=admin'
+      - 'ORGA_ADMIN_GIVENNAME=IOT'
+      - 'ORGA_ADMIN_SURNAME=Administrator'
+      - 'ORGA_ADMIN_PASSWORD=iot12345'
+    ports:
+      - '8081:8080'
+      - '8100:8099'
+    expose:
+      - '7800'
+      - '8080'
+      - '8099'
+    image: bluerange/bluerange:latest
+    links:
+      - 'database'
+      - 'mongodb'
+
+  database:
+    environment:
+      - 'MYSQL_PASSWORD=bluerange-database-pwd-change-me'
+      - 'MYSQL_USER=bluerange'
+      - 'MYSQL_DATABASE=bluerange'
+      - 'MYSQL_ROOT_PASSWORD=root-database-pwd-change-me'
+    ports:
+      - '3307:3306'
+    expose:
+      - '3306'
+    image: mariadb:latest
+    volumes:
+      - './initdb.sql:/docker-entrypoint-initdb.d/initdb.sql'
+      - './database.cnf:/etc/mysql/conf.d/database.cnf'
+      - 'mysql:/var/lib/mysql'
+
+  mongodb:
+    environment:
+      - 'MONGO_INITDB_ROOT_USERNAME=bluerange'
+      - 'MONGO_INITDB_ROOT_PASSWORD=bluerange-mongodb-pwd-change-me'
+      - 'MONGO_INITDB_DATABASE=bluerange'
+    ports:
+      - '27018:27017'
+    expose:
+      - '27017'
+    image: mongo:latest
+    volumes:
+      - 'mongodb:/data/db'
+
+  nginx:
+    ports:
+      - '443:443'
+    expose:
+      - '80'
+      - '443'
+    image: nginx:latest
+    #command: /bin/bash -c "nginx-debug -g 'daemon off;'"
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+      - './mime.types:/etc/nginx/mime.types'
+      - './server.key:/etc/nginx/server.key'
+      - './server.pem:/etc/nginx/server.pem'
+      - './htpasswd:/etc/nginx/htpasswd'
+    links: 
+      - 'bluerange'
+      - 'mosquitto'
+      - 'nodered'
+
+  mosquitto:
+    restart: always
+    ports:
+      - '1884:1883'
+      - '8884:8883'
+      - '9002:9001'
+    expose:
+      - '1883'
+      - '8883'
+      - '9001'
+    image: relution/relution-mosquitto:latest
+    volumes:
+      #- './mosquitto.conf:/etc/mosquitto/mosquitto.conf'
+      - './server.key:/etc/mosquitto/server.key'
+      - './server.pem:/etc/mosquitto/server.pem'
+    links:
+      - 'bluerange'
+
+  nodered:
+    ports:
+      - '1881:1880'
+    expose:
+      - '1880'
+    image: nodered/node-red-docker:latest
+    volumes:
+      - 'nodered:/data'
+    links:
+      - 'bluerange'
+      - 'mosquitto'
+      - 'database'
+      - 'mongodb'
+
+volumes:
+  mysql:
+  mongodb:
+  nodered:
