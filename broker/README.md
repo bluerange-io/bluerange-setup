@@ -6,9 +6,9 @@ This folder contains files necessary for on-premise installation of the Mosquitt
 
 For the MQTT broker you need:
 
-- **fully-qualified name of host** to run the broker software at. The name MUST be registered with DNS. This is so that user and IoT devices can resolve the host.
+- **fully-qualified name of host** to run the broker software on. The name MUST be registered with DNS. This is so that user and IoT devices can resolve the host.
 
-- valid **HTTPS certificate and private key** matching that host/domain name. This is so that client software has a chance establishing WSS connections to it.
+- valid **HTTPS certificate and private key** matching that host/domain name so that client software has a chance establishing WSS connections to it.
 
 - **ports 8883 and 9001 opened** in the firewall protecting the host.
 
