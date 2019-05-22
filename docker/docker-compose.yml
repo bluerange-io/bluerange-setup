@@ -98,7 +98,8 @@ services:
       - './server.key:/etc/mosquitto/server.key'
       - './server.pem:/etc/mosquitto/server.pem'
     links:
-      - 'bluerange'
+      # relution-mosquitto image assumes relution as authentication server
+      - 'bluerange:relution'
 
   nodered:
     ports:
