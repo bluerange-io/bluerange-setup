@@ -1,0 +1,124 @@
+version: '2'
+services:
+
+  mender-redis:
+    image: redis:3.2.11-alpine
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis:/var/lib/redis:rw
+      - ./conductor/redis/redis.conf:/etc/redis/redis.conf:ro
+      - ./conductor/redis/entrypoint.sh:/redis/entrypoint.sh:ro
+    entrypoint: /redis/entrypoint.sh
+
+  mender-conductor:
+    environment:
+      - 'CONFIG_PROP=config.properties'
+    image: mendersoftware/mender-conductor:1.2.0
+    volumes:
+      - ./conductor/server/config:/app/config:ro
+    links:
+      - 'elasticsearch'
+      - 'mender-redis'
+
+  minio:
+    environment:
+      - 'MINIO_ACCESS_KEY=mender-deployments'
+      - 'MINIO_SECRET_KEY=minio-secret-change-me'
+    image: minio/minio:RELEASE.2018-09-25T21-34-43Z
+    volumes:
+      - mender-artifacts:/export:rw
+    command: server /export
+
+  storage-proxy:
+    image: openresty/openresty:1.13.6.2-0-alpine
+    links:
+      - minio
+    volumes:
+      - ./storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+    ports:
+      - "9001:9000"
+    environment:
+      - 'DOWNLOAD_SPEED=5m'
+      - 'MAX_CONNECTIONS=50'
+    volumes:
+      - ./server.pem:/var/www/storage-proxy/cert/cert.crt:ro
+      - ./server.key:/var/www/storage-proxy/cert/private.key:ro
+
+  mender-deployments:
+    environment:
+      - 'DEPLOYMENTS_MONGO_USERNAME=bluerange'
+      - 'DEPLOYMENTS_MONGO_PASSWORD=bluerange-mongodb-pwd-change-me'
+      # SSL certs
+      - 'STORAGE_BACKEND_CERT=/etc/ssl/certs/storage-proxy.crt'
+      # access key, the same value as MINIO_ACCESS_KEY
+      - 'DEPLOYMENTS_AWS_AUTH_KEY=mender-deployments'
+      # secret, the same valie as MINIO_SECRET_KEY
+      - 'DEPLOYMENTS_AWS_AUTH_SECRET=minio-secret-change-me'
+      # deployments service uses signed URLs, hence it needs to access
+      # storage-proxy using exactly the same name as devices will; if
+      # devices will access storage using https://s3.acme.org:9000, then
+      # set this to https://s3.acme.org:9000
+      - 'DEPLOYMENTS_AWS_URI=http://minio:9000'
+    image: mendersoftware/deployments:1.6.0
+    links:
+      - 'mongodb:mongo-deployments'
+    command: server --automigrate
+    volumes:
+      - ./server.pem:/etc/ssl/certs/storage-proxy.crt:ro
+
+  mender-gui:
+    environment:
+      - 'INTEGRATION_VERSION'
+    image: mendersoftware/gui:1.7.0
+
+  mender-api-gateway:
+    environment:
+      - 'ALLOWED_HOSTS=${HOST}:444'
+    image: mendersoftware/api-gateway:1.6.0
+    links:
+      - mender-device-auth
+      - mender-deployments
+      - mender-gui
+      - mender-useradm
+      - mender-inventory
+    ports:
+      - '444:443'
+    volumes:
+      - ./server.pem:/var/www/mendersoftware/cert/cert.crt:ro
+      - ./server.key:/var/www/mendersoftware/cert/private.key:ro
+
+  mender-device-auth:
+    environment:
+      - 'DEVICEAUTH_MONGO_USERNAME=bluerange'
+      - 'DEVICEAUTH_MONGO_PASSWORD=bluerange-mongodb-pwd-change-me'
+    image: mendersoftware/deviceauth:1.7.0
+    links:
+      - 'mongodb:mongo-device-auth'
+    command: server --automigrate
+    volumes:
+      - ./server.key:/etc/deviceauth/rsa/private.pem:ro
+
+  mender-inventory:
+    environment:
+      - 'INVENTORY_MONGO_USERNAME=bluerange'
+      - 'INVENTORY_MONGO_PASSWORD=bluerange-mongodb-pwd-change-me'
+    image: mendersoftware/inventory:1.5.0
+    links:
+      - 'mongodb:mongo-inventory'
+    command: server --automigrate
+
+  mender-useradm:
+    environment:
+      - 'USERADM_MONGO_USERNAME=bluerange'
+      - 'USERADM_MONGO_PASSWORD=bluerange-mongodb-pwd-change-me'
+    image: mendersoftware/useradm:1.7.0
+    links:
+      - 'mongodb:mongo-useradm'
+    command: server --automigrate
+    volumes:
+      - ./server.key:/etc/useradm/rsa/private.pem:ro
+
+volumes:
+  redis:
+  mender-artifacts:

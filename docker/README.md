@@ -44,6 +44,85 @@ The HTTPS certificate required may be generated using <https://letsencrypt.org/>
 
 The [docker-compose.yml](docker-compose.yml) contains commented sections for running `nginx` in debug mode and for mounting a custom `mosquitto.conf` file, see <https://hub.docker.com/r/relution/relution-mosquitto>.
 
+## Appliance configuration
+
+So far the configuration above offers a fully functioning BlueRange server environment for testing and/or development purposes. In production scenarios logging and update servers are required as well.
+
+Typically a logging server such as an ELK installation exists in the IT infrastructure hosting BlueRange already and shall be reused. As update server mostly the publically available cloud service is used.
+
+### Elasticsearch logging server
+
+ In case an additional Elasticsearch logging server must be set up, the file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains the relevant additional services required, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
+
+To use it firstly convert the server.key to PKCS#8 format required by Elasticsearch (see <https://stackoverflow.com/questions/6559272/algid-parse-error-not-a-sequence>) and then start both the compositions:
+
+```sh
+# convert server.key to PKCS#8
+$ openssl pkcs8 -topk8 -inform PEM -in server.key -out server.pk8 -nocrypt
+
+# start both compose files
+$ docker-compose -f docker-compose.yml -f docker-compose.elasticsearch.yml up -d
+```
+
+In order to let the mesh gateway devices know about the custom logging server, a configuration policy must be applied in the platform.
+
+### Mender update server
+
+Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated Mender update server:
+
+```sh
+# start BlueRange IoT server and Mender update server
+$ docker-compose -f docker-compose.yml -f docker-compose.mender.yml up -d
+```
+
+Once started the update server is available via HTTPS at port 444, i.e. <https://my-machine.my-domain.me:444>. In order to log into the server an initial user account must be created explicitly:
+
+```sh
+# create user admin@my-machine.my-domain.me in Mender
+$ docker-compose exec -T mender-useradm useradm create-user --username=admin@my-machine.my-domain.me --password=admin123
+```
+
+In order to let the mesh gateway devices know about the custom update server, a configuration policy must be applied in the platform.
+
+### BlueRange software stack
+
+Finally to help getting started with a fully self-administered on-premise setup including all of BlueRange, ElasticSearch and Mender the entire software stack can be started at once:
+
+```sh
+# convert server.key to PKCS#8
+$ openssl pkcs8 -topk8 -inform PEM -in server.key -out server.pk8 -nocrypt
+
+# start all-in-one BlueRange software stack
+$ ./bluerange-compose.sh
+
+Starting bluerange_database_1  ... done
+Starting bluerange_bluerange_1 ... done
+Starting bluerange_mosquitto_1 ... done
+Starting bluerange_nodered_1   ... done
+Starting bluerange_nginx_1     ... done
+...
+
+mender-useradm$ useradm create-user --username=admin@my-machine.my-domain.me --password=admin123
+4f091170-da1a-11e9-aaef-0800200c9a66
+
+    BlueRange: https://my-machine.my-domain.me:443  (admin / admin123)
+       Mender: https://my-machine.my-domain.me:444  (admin@my-machine.my-domain.me / admin123)
+       Kibana: https://my-machine.my-domain.me:5602 (admin / admin)
+ElasticSearch: https://my-machine.my-domain.me:9201 (admin / admin)
+```
+
+Notice, the [bluerange-compose.sh](bluerange-compose.sh) script can be used just like `docker-compose`:
+
+```sh
+# display all logs with follow
+$ ./bluerange-compose.sh logs -f
+
+# stop all-in-one BlueRange software stack
+$ ./bluerange-compose.sh down
+```
+
+Further customization should be done using the `docker-compose.override.yml` mechanism, see <https://docs.docker.com/compose/extends/>.
+
 ## Beacons and the Mesh Gateway
 
 By default, the environment is set up automatically creating an organization named `IOT`. It is expected to enroll IoT things therein. To log on use username `admin` and password `iot12345`.

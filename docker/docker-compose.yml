@@ -46,9 +46,9 @@ services:
       - '3306'
     image: mariadb:latest
     volumes:
-      - './initdb.sql:/docker-entrypoint-initdb.d/initdb.sql'
-      - './database.cnf:/etc/mysql/conf.d/database.cnf'
-      - 'mysql:/var/lib/mysql'
+      - './initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro'
+      - './database.cnf:/etc/mysql/conf.d/database.cnf:ro'
+      - 'mysql:/var/lib/mysql:rw'
 
   mongodb:
     environment:
@@ -61,7 +61,7 @@ services:
       - '27017'
     image: mongo:latest
     volumes:
-      - 'mongodb:/data/db'
+      - 'mongodb:/data/db:rw'
 
   nginx:
     ports:
@@ -72,11 +72,11 @@ services:
     image: nginx:latest
     #command: /bin/bash -c "nginx-debug -g 'daemon off;'"
     volumes:
-      - './nginx.conf:/etc/nginx/nginx.conf'
-      - './mime.types:/etc/nginx/mime.types'
-      - './server.key:/etc/nginx/server.key'
-      - './server.pem:/etc/nginx/server.pem'
-      - './htpasswd:/etc/nginx/htpasswd'
+      - './nginx.conf:/etc/nginx/nginx.conf:ro'
+      - './mime.types:/etc/nginx/mime.types:ro'
+      - './server.key:/etc/nginx/server.key:ro'
+      - './server.pem:/etc/nginx/server.pem:ro'
+      - './htpasswd:/etc/nginx/htpasswd:ro'
     links: 
       - 'bluerange'
       - 'mosquitto'
@@ -94,9 +94,9 @@ services:
       - '9001'
     image: relution/relution-mosquitto:latest
     volumes:
-      #- './mosquitto.conf:/etc/mosquitto/mosquitto.conf'
-      - './server.key:/etc/mosquitto/server.key'
-      - './server.pem:/etc/mosquitto/server.pem'
+      #- './mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro'
+      - './server.key:/etc/mosquitto/server.key:ro'
+      - './server.pem:/etc/mosquitto/server.pem:ro'
     links:
       # relution-mosquitto image assumes relution as authentication server
       - 'bluerange:relution'
@@ -108,7 +108,7 @@ services:
       - '1880'
     image: nodered/node-red-docker:latest
     volumes:
-      - 'nodered:/data'
+      - 'nodered:/data:rw'
     links:
       - 'bluerange'
       - 'mosquitto'

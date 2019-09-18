@@ -1,3 +1,5 @@
-/server.pem
+/docker-compose.override.yml
 /server.env
 /server.key
+/server.pem
+/server.pk8
