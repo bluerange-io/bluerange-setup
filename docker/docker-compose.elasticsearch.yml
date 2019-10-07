@@ -52,7 +52,7 @@ services:
       - 'LOGSENE_ENABLED=false'
     cap_add:
       - SYS_ADMIN
-    image: sematext/logagent:3.0.0
+    image: sematext/logagent:3.0.2
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     links:
