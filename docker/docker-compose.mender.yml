@@ -34,14 +34,13 @@ services:
     image: openresty/openresty:1.13.6.2-0-alpine
     links:
       - minio
-    volumes:
-      - ./storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
     ports:
-      - "9001:9000"
+      - "9000:9000"
     environment:
       - 'DOWNLOAD_SPEED=5m'
       - 'MAX_CONNECTIONS=50'
     volumes:
+      - ./storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
       - ./server.pem:/var/www/storage-proxy/cert/cert.crt:ro
       - ./server.key:/var/www/storage-proxy/cert/private.key:ro
 
@@ -59,7 +58,7 @@ services:
       # storage-proxy using exactly the same name as devices will; if
       # devices will access storage using https://s3.acme.org:9000, then
       # set this to https://s3.acme.org:9000
-      - 'DEPLOYMENTS_AWS_URI=http://minio:9000'
+      - 'DEPLOYMENTS_AWS_URI=https://${HOST}:9000'
     image: mendersoftware/deployments:1.6.0
     links:
       - 'mongodb:mongo-deployments'
