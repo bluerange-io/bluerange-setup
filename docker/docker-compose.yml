@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
 
   bluerange:
@@ -22,6 +22,9 @@ services:
       - 'ORGA_ADMIN_GIVENNAME=IOT'
       - 'ORGA_ADMIN_SURNAME=Administrator'
       - 'ORGA_ADMIN_PASSWORD=iot12345'
+    depends_on:
+      database:
+        condition: service_healthy
     ports:
       - '8081:8080'
       - '8100:8099'
@@ -40,6 +43,11 @@ services:
       - 'MYSQL_USER=bluerange'
       - 'MYSQL_DATABASE=bluerange'
       - 'MYSQL_ROOT_PASSWORD=root-database-pwd-change-me'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     ports:
       - '3307:3306'
     expose:
