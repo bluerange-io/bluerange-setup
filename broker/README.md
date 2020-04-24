@@ -29,7 +29,7 @@ This is the recommended platform for MQTT broker installation supporting medium 
 
 4. Provide `server.key` and `server.pem` files next to the just edited configuration files containing the HTTPS certificate. These may be symbolic links to the `nginx` files when running on the same machine.
 
-Notice, the plugin is precompiled to run on most 64-bit x86 Linux. It can be recompiled from source available at <https://github.com/jpmens/mosquitto-auth-plug> supporting the `http` authentication backend. Do **NOT** operate the MQTT broker without authentication!
+Notice, the plugin is precompiled to run on most 64-bit x86 Linux by M-Way Solutions GmbH. Do **NOT** operate the MQTT broker without authentication!
 
 In the event of service startup failure you may want to alter the `logdest` configuration option to `stderr` (instead of `none`) for diagnostic purposes.
 
