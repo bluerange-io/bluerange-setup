@@ -50,7 +50,7 @@ So far the configuration above offers a fully functioning BlueRange server envir
 
 Typically a logging server such as an ELK installation exists in the IT infrastructure hosting BlueRange already and shall be reused. As update server mostly the publically available cloud service is used.
 
-### Elasticsearch logging server
+### Logging server
 
  In case an additional Elasticsearch logging server must be set up, the file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains the relevant additional services required, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
 
@@ -66,19 +66,19 @@ $ docker-compose -f docker-compose.yml -f docker-compose.elasticsearch.yml up -d
 
 In order to let the mesh gateway devices know about the custom logging server, a configuration policy must be applied in the platform.
 
-### Mender update server
+### Update server
 
-Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated Mender update server:
+Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated update server:
 
 ```sh
-# start BlueRange IoT server and Mender update server
+# start BlueRange IoT server and the update server
 $ docker-compose -f docker-compose.yml -f docker-compose.mender.yml up -d
 ```
 
 Once started the update server is available via HTTPS at port 444, i.e. <https://my-machine.my-domain.me:444>. In order to log into the server an initial user account must be created explicitly:
 
 ```sh
-# create user admin@my-machine.my-domain.me in Mender
+# create user admin@my-machine.my-domain.me
 $ docker-compose exec -T mender-useradm useradm create-user --username=admin@my-machine.my-domain.me --password=admin123
 ```
 
@@ -86,7 +86,7 @@ In order to let the mesh gateway devices know about the custom update server, a 
 
 ### BlueRange software stack
 
-Finally to help getting started with a fully self-administered on-premise setup including all of BlueRange, ElasticSearch and Mender the entire software stack can be started at once:
+Finally to help getting started with a fully self-administered on-premise setup including all of BlueRange, logging and update servers the entire software stack can be started at once:
 
 ```sh
 # convert server.key to PKCS#8
