@@ -1,6 +1,6 @@
 # BlueRange setup
 
-Required companion files for setting up BlueRange on various platforms. Detailed installation instructions can be found at <https://www.bluerange.io/docs/bluerange-installguide/abstract.html>.
+Required companion files for setting up BlueRange on various platforms. Detailed installation instructions can be found [here](https://www.bluerange.io/docs/bluerange-installguide/abstract.html).
 
 ## Supported platforms
 
