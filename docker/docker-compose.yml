@@ -37,6 +37,9 @@ services:
       - '8080'
       - '8099'
     image: bluerange/bluerange:latest
+    volumes:
+      # mount folder of trusted CAs
+      - './anchors:/etc/pki/ca-trust/source/anchors:ro'
     links:
       - 'database'
       - 'mongodb'

@@ -17,7 +17,7 @@ services:
     volumes:
       - './elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro'
       - './server.pem:/usr/share/elasticsearch/config/server.pem:ro'
-      - './server.pk8:/usr/share/elasticsearch/config/server.pk8:ro'
+      - './server.rsa:/usr/share/elasticsearch/config/server.rsa:ro'
       - 'elasticsearch:/usr/share/elasticsearch/data:rw'
 
   kibana:

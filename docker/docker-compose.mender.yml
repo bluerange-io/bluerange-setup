@@ -42,7 +42,7 @@ services:
     volumes:
       - ./storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
       - ./server.pem:/var/www/storage-proxy/cert/cert.crt:ro
-      - ./server.key:/var/www/storage-proxy/cert/private.key:ro
+      - ./server.rsa:/var/www/storage-proxy/cert/private.key:ro
 
   mender-deployments:
     environment:
@@ -85,7 +85,7 @@ services:
       - '444:443'
     volumes:
       - ./server.pem:/var/www/mendersoftware/cert/cert.crt:ro
-      - ./server.key:/var/www/mendersoftware/cert/private.key:ro
+      - ./server.rsa:/var/www/mendersoftware/cert/private.key:ro
 
   mender-device-auth:
     environment:
@@ -96,7 +96,7 @@ services:
       - 'mongodb:mongo-device-auth'
     command: server --automigrate
     volumes:
-      - ./server.key:/etc/deviceauth/rsa/private.pem:ro
+      - ./server.rsa:/etc/deviceauth/rsa/private.pem:ro
 
   mender-inventory:
     environment:
@@ -116,7 +116,7 @@ services:
       - 'mongodb:mongo-useradm'
     command: server --automigrate
     volumes:
-      - ./server.key:/etc/useradm/rsa/private.pem:ro
+      - ./server.rsa:/etc/useradm/rsa/private.pem:ro
 
 volumes:
   redis:

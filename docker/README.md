@@ -22,13 +22,13 @@ Except of nginx HTTPS, these ports are all off-by-one from their respective defa
 
 ## Required configuration
 
-As a minimum before starting the compose you need to provide a the following 3 files:
+The compose scripts expect that the following files are provided:
 
-- server.env: environment variable file containing the host machine name as registered in DNS and mail server configuration
-- server.pem: certificate chain used for HTTPS which must match the host machine name registered with DNS
-- server.key: private key for issuing the HTTPS certificate
+- `server.env`: environment variable file containing the host machine name as registered in DNS and mail server configuration
+- `server.pem`: certificate chain used for HTTPS which must match the host machine name registered with DNS
+- `server.key`: private key for issuing the HTTPS certificate
 
-The server.env file should look like this:
+The `server.env` file should look like this:
 
 ```env
 HOST=my-machine.my-domain.me
@@ -39,6 +39,8 @@ SMTP_PASSWORD=XXXXXXXX
 ```
 
 The HTTPS certificate required may be generated using <https://letsencrypt.org/>. Please make sure to have a property DNS record set up for your workstation.
+
+In case no HTTPS certificate is found the [bluerange-compose.sh](bluerange-compose.sh) script will set up a certificate authority interactively. Secure connections using this mechanism require installation of the `ca.pem` file created as a trusted ca onto all IoT gateways, mobile and browser clients.
 
 ## Optional configuration
 
@@ -59,6 +61,9 @@ To use it firstly convert the server.key to PKCS#8 format required by Elasticsea
 ```sh
 # convert server.key to PKCS#8
 $ openssl pkcs8 -topk8 -inform PEM -in server.key -out server.pk8 -nocrypt
+
+# convert server.key to RSA
+openssl rsa -inform PEM -in server.key -out server.rsa
 
 # start both compose files
 $ docker-compose -f docker-compose.yml -f docker-compose.elasticsearch.yml up -d
