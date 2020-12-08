@@ -190,10 +190,15 @@ EOF
   echo ""
   echo "mender-useradm$" useradm create-user --username=admin@${HOST} --password=admin123
   $DOCKER_COMPOSE exec -T mender-useradm useradm create-user --username=admin@${HOST} --password=admin123 || true
+
+  MINIO_ACCESS_KEY=$($DOCKER_COMPOSE exec minio printenv MINIO_ACCESS_KEY | tr -d [:space:] || echo ?)
+  MINIO_SECRET_KEY=$($DOCKER_COMPOSE exec minio printenv MINIO_SECRET_KEY | tr -d [:space:] || echo ?)
+
   echo ""
   echo "    BlueRange: https://${HOST}:443  (admin / admin123)"
   echo "       Mender: https://${HOST}:444  (admin@${HOST} / admin123)"
   echo "       Kibana: https://${HOST}:5602 (admin / admin)"
+  echo "        Minio: https://${HOST}:9000 (${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY})"
   echo "ElasticSearch: https://${HOST}:9201 (admin / admin)"
   exit 0
 fi
