@@ -113,7 +113,7 @@ services:
     volumes:
       #- './mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro'
       - './server.key:/etc/mosquitto/server.key:ro'
-      - './server.pem:/etc/mosquitto/server.pem:ro'
+      - './fullchain.pem:/etc/mosquitto/server.pem:ro'
     links:
       # relution-mosquitto image assumes relution as authentication server
       - 'bluerange:relution'
