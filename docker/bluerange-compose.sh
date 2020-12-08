@@ -170,10 +170,6 @@ EOF
     cp cert.pem server.pem
     cp cert.key server.key
   fi
-  if [ ! -f server.pk8 ] ; then
-    echo "$" openssl pkcs8 -topk8 -inform PEM -in server.key -out server.pk8 -nocrypt
-    openssl pkcs8 -topk8 -inform PEM -in server.key -out server.pk8 -nocrypt
-  fi
   if [ ! -f server.rsa ] ; then
     echo "$" openssl rsa -inform PEM -in server.key -out server.rsa
     openssl rsa -inform PEM -in server.key -out server.rsa

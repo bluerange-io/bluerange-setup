@@ -54,17 +54,9 @@ Typically a logging server such as an ELK installation exists in the IT infrastr
 
 ### Logging server
 
- In case an additional Elasticsearch logging server must be set up, the file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains the relevant additional services required, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
-
-To use it firstly convert the server.key to PKCS#8 format required by Elasticsearch (see <https://stackoverflow.com/questions/6559272/algid-parse-error-not-a-sequence>) and then start both the compositions:
+In case an additional Elasticsearch logging server must be set up, the file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains the relevant additional services required, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
 
 ```sh
-# convert server.key to PKCS#8
-$ openssl pkcs8 -topk8 -inform PEM -in server.key -out server.pk8 -nocrypt
-
-# convert server.key to RSA
-openssl rsa -inform PEM -in server.key -out server.rsa
-
 # start both compose files
 $ docker-compose -f docker-compose.yml -f docker-compose.elasticsearch.yml up -d
 ```
@@ -73,9 +65,14 @@ In order to let the mesh gateway devices know about the custom logging server, a
 
 ### Update server
 
-Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated update server:
+Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated update server.
+
+Notice, some Mender microservices require the HTTPS private key in PKCS#1 format which is taken care of below as well:
 
 ```sh
+# convert server.key to RSA
+openssl rsa -inform PEM -in server.key -out server.rsa
+
 # start BlueRange IoT server and the update server
 $ docker-compose -f docker-compose.yml -f docker-compose.mender.yml up -d
 ```
@@ -243,3 +240,23 @@ Information required for setting up the connection are:
 You need to enable SSL/TLS security.
 
 When publishing messages keep in mind that Node RED is subscribed to `rltn-iot/`*iot-organization-uuid*`/#` so that only messages below this topic path are delivered to it.
+
+# Questions & Answers
+
+## What format the HTTPS private key must be stored in?
+
+The compose scripts assume the `server.key` is in PKCS#8 format like so:
+
+```
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDmLODlf5T6hift
+...
+sjGth1CertrqwJJC6Q/tlDY=
+-----END PRIVATE KEY-----
+```
+
+Files starting with `-----BEGIN RSA PRIVATE KEY-----` must be converted using the command:
+
+```sh
+$ openssl pkcs8 -topk8 -inform PEM -in server.rsa -out server.key -nocrypt
+```
