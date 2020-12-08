@@ -41,7 +41,7 @@ services:
       - 'MAX_CONNECTIONS=50'
     volumes:
       - ./storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
-      - ./server.pem:/var/www/storage-proxy/cert/cert.crt:ro
+      - ./fullchain.pem:/var/www/storage-proxy/cert/cert.crt:ro
       - ./server.key:/var/www/storage-proxy/cert/private.key:ro
 
   mender-deployments:
@@ -64,7 +64,7 @@ services:
       - 'mongodb:mongo-deployments'
     command: server --automigrate
     volumes:
-      - ./server.pem:/etc/ssl/certs/storage-proxy.crt:ro
+      - ./ca.pem:/etc/ssl/certs/storage-proxy.crt:ro
 
   mender-gui:
     environment:
@@ -84,7 +84,7 @@ services:
     ports:
       - '444:443'
     volumes:
-      - ./server.pem:/var/www/mendersoftware/cert/cert.crt:ro
+      - ./fullchain.pem:/var/www/mendersoftware/cert/cert.crt:ro
       - ./server.key:/var/www/mendersoftware/cert/private.key:ro
 
   mender-device-auth:
