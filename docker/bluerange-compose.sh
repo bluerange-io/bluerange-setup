@@ -154,6 +154,7 @@ stateOrProvinceName = optional
 organizationName = optional
 organizationalUnitName = optional
 commonName = supplied
+emailAddress = optional
 EOF
     mkdir -p newcerts
     if [ ! -f index.txt ] ; then touch index.txt; fi
@@ -167,16 +168,21 @@ EOF
     openssl verify -CAfile ca.crt cert.crt
 
     # resulting PEMs
+    rm -f fullchain.pem
     cp cert.pem server.pem
+    rm -f server.rsa
     cp cert.key server.key
-  fi
-  if [ ! -f server.rsa ] ; then
-    echo "$" openssl rsa -inform PEM -in server.key -out server.rsa
-    openssl rsa -inform PEM -in server.key -out server.rsa
   fi
   if [ -f ca.pem ] ; then
     # workaround <https://github.com/docker/compose/issues/5066> by mounting containing folder instead of file
     cp ca.pem anchors
+    if [ ! -f fullchain.pem ] ; then
+      cat server.pem ca.pem > fullchain.pem
+    fi
+  fi
+  if [ ! -f server.rsa ] ; then
+    echo "$" openssl rsa -inform PEM -in server.key -out server.rsa
+    openssl rsa -inform PEM -in server.key -out server.rsa
   fi
 
   echo "$" $DOCKER_COMPOSE up -d
