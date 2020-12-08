@@ -22,7 +22,7 @@ if [ $# -eq 0 ] ; then
       echo "$" openssl genrsa -out ca.key 2048
       openssl genrsa -out ca.key 2048
       echo "$" openssl req -new -x509 -key ca.key -out ca.crt
-      openssl req -new -x509 -key ca.key -out ca.crt
+      openssl req -new -x509 -key ca.key -out ca.crt -days 10950
       echo "$" openssl x509 -in ca.crt -out ca.pem
       openssl x509 -in ca.crt -out ca.pem
     fi
