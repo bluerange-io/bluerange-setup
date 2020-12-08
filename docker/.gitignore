@@ -1,5 +1,9 @@
+/anchors/*
+/ca.*
+/cert.*
 /docker-compose.override.yml
-/server.env
-/server.key
-/server.pem
-/server.pk8
+/fullchain.pem
+/index.*
+/newcerts/*
+/serial*
+/server.*
