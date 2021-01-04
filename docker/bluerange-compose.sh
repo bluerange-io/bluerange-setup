@@ -9,7 +9,7 @@ export HOST
 if [ -z "$HOST" ] ; then
   echo "server.env not found!"
   echo ""
-  echo "Please follow instructions given in README.me for setting up your environment."
+  echo "Please follow instructions given in README.md for setting up your environment."
   exit 1
 fi
 mkdir -p anchors
