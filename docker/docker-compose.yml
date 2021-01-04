@@ -123,7 +123,7 @@ services:
       - '1881:1880'
     expose:
       - '1880'
-    image: nodered/node-red-docker:latest
+    image: nodered/node-red:latest
     volumes:
       - 'nodered:/data:rw'
     links:
