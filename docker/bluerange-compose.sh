@@ -29,7 +29,7 @@ if [ $# -eq 0 ] ; then
 
     # create CSR
     if [ ! -f cert.csr ] ; then
-      export CA_SUBJECT_LINE=$(openssl x509 -in ca.crt -noout -subject)
+      export CA_SUBJECT_LINE=$(openssl x509 -in ca.crt -noout -subject -nameopt compat)
       $(echo $CA_SUBJECT_LINE | awk -F '/' '{ for (i=2; i<=NF; i++) { print "export CA_SUBJECT_LINE__"$i } }')
       export HOST__DNS=host.that.does.not.match
       export HOST__IP=240.0.0.0 # see <https://superuser.com/questions/698244/ip-address-that-is-the-equivalent-of-dev-null>
