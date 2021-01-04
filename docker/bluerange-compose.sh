@@ -4,8 +4,10 @@ cd $(dirname ${BASH_SOURCE:-$0})
 
 DOCKER_COMPOSE="docker-compose -p bluerange -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
 
-. ./server.env
-export HOST
+if [ -f ./server.env ] ; then
+  . ./server.env
+  export HOST
+fi
 if [ -z "$HOST" ] ; then
   echo "server.env not found!"
   echo ""
