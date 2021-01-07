@@ -4,6 +4,7 @@ cd $(dirname ${BASH_SOURCE:-$0})
 
 DOCKER_COMPOSE="docker-compose -p bluerange -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
 
+. ./.env
 if [ -f ./server.env ] ; then
   . ./server.env
   export HOST
@@ -190,15 +191,15 @@ EOF
   echo "$" $DOCKER_COMPOSE up -d
   $DOCKER_COMPOSE up -d
   echo ""
-  echo "mender-useradm$" useradm create-user --username=admin@${HOST} --password=admin123
-  $DOCKER_COMPOSE exec -T mender-useradm useradm create-user --username=admin@${HOST} --password=admin123 || true
+  echo "mender-useradm$" useradm create-user --username=admin@${HOST} --password=${SYSTEM_ADMIN_PASSWORD}
+  $DOCKER_COMPOSE exec -T mender-useradm useradm create-user --username=admin@${HOST} --password=${SYSTEM_ADMIN_PASSWORD} || true
 
   MINIO_ACCESS_KEY=$($DOCKER_COMPOSE exec minio printenv MINIO_ACCESS_KEY | tr -d [:space:] || echo ?)
   MINIO_SECRET_KEY=$($DOCKER_COMPOSE exec minio printenv MINIO_SECRET_KEY | tr -d [:space:] || echo ?)
 
   echo ""
-  echo "    BlueRange: https://${HOST}:443  (admin / admin123)"
-  echo "       Mender: https://${HOST}:444  (admin@${HOST} / admin123)"
+  echo "    BlueRange: https://${HOST}:443  (admin / ${SYSTEM_ADMIN_PASSWORD})"
+  echo "       Mender: https://${HOST}:444  (admin@${HOST} / ${SYSTEM_ADMIN_PASSWORD})"
   echo "       Kibana: https://${HOST}:5602 (admin / admin)"
   echo "        Minio: https://${HOST}:9000 (${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY})"
   echo "ElasticSearch: https://${HOST}:9201 (admin / admin)"
