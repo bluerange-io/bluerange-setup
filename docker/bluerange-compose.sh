@@ -170,9 +170,9 @@ EOF
     openssl verify -CAfile ca.crt cert.crt
 
     # resulting PEMs
-    rm -f fullchain.pem
+    rm -df fullchain.pem
     cp cert.pem server.pem
-    rm -f server.rsa
+    rm -df server.key server.rsa
     cp cert.key server.key
   fi
   if [ -f ca.pem ] ; then
