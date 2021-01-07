@@ -175,6 +175,10 @@ EOF
     cp cert.pem server.pem
     rm -df server.key server.rsa
     cp cert.key server.key
+  
+    # workaround Kibana permission problem <https://discuss.opendistrocommunity.dev/t/certificate-permissions-with-docker/718>
+    chmod g+r server.key
+    chgrp 1000 server.key
   fi
   if [ -f ca.pem ] ; then
     # workaround <https://github.com/docker/compose/issues/5066> by mounting containing folder instead of file
