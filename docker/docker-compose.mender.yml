@@ -86,6 +86,8 @@ services:
     volumes:
       - ./fullchain.pem:/var/www/mendersoftware/cert/cert.crt:ro
       - ./server.key:/var/www/mendersoftware/cert/private.key:ro
+      - ./entrypoint-no-http2.sh:/entrypoint-no-http2.sh
+    entrypoint: ["/entrypoint-no-http2.sh"]
 
   mender-device-auth:
     environment:
