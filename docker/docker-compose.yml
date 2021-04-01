@@ -6,6 +6,9 @@ services:
       - './server.env'
     environment:
       - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+      - 'ROOT_DATABASE_PWD='
+      - 'MINIO_ACCESS_KEY='
+      - 'MINIO_SECRET_KEY='
       - 'HOSTNAME=https://$${HOST}'
       - 'TZ=UTC'
       - 'DATABASE_TYPE=mariadb'
