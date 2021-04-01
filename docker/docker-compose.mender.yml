@@ -73,6 +73,7 @@ services:
 
   mender-api-gateway:
     environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
       - 'ALLOWED_HOSTS=${HOST}:444'
     image: mendersoftware/api-gateway:1.6.0
     links:

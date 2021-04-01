@@ -3,6 +3,7 @@ services:
 
   elasticsearch:
     environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
       - 'cluster.name=bluerange'
       - 'discovery.type=single-node'
     labels:

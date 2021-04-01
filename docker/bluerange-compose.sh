@@ -3,6 +3,7 @@ set -e
 cd $(dirname ${BASH_SOURCE:-$0})
 
 DOCKER_COMPOSE="docker-compose -p bluerange -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
+export BLUERANGE_COMPOSE_SH=1
 
 set -a
 . ./.env
