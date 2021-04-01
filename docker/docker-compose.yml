@@ -10,13 +10,13 @@ services:
       - 'DATABASE_TYPE=mariadb'
       - 'DATABASE_URL=jdbc:mariadb://database/bluerange?useServerPrepStmts=true'
       - 'DATABASE_USER=bluerange'
-      - 'DATABASE_PWD=bluerange-database-pwd-change-me'
+      - 'DATABASE_PWD=${DATABASE_PWD:-bluerange-database-pwd-change-me}'
       - 'RELUTION_MONGODB_ENABLED=true'
       - 'MONGO_DATABASE=bluerange'
       - 'MONGO_HOST=mongodb'
       - 'MONGO_PORT=27017'
       - 'MONGO_USERNAME=bluerange'
-      - 'MONGO_PASSWORD=bluerange-mongodb-pwd-change-me'
+      - 'MONGO_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
       - 'MONGO_AUTHENTICATION_DATABASE=admin'
       - 'MQTT_ENABLED=true'
       - 'MQTT_SERVER_URIS=ssl://$${HOST}:8884,wss://$${HOST}:9002'
@@ -25,7 +25,6 @@ services:
       - 'ORGA_ADMIN_USERNAME=admin'
       - 'ORGA_ADMIN_GIVENNAME=IOT'
       - 'ORGA_ADMIN_SURNAME=Administrator'
-      - 'ORGA_ADMIN_PASSWORD=iot12345'
     depends_on:
       database:
         condition: service_healthy
@@ -46,10 +45,10 @@ services:
 
   database:
     environment:
-      - 'MYSQL_PASSWORD=bluerange-database-pwd-change-me'
+      - 'MYSQL_PASSWORD=${DATABASE_PWD:-bluerange-database-pwd-change-me}'
       - 'MYSQL_USER=bluerange'
       - 'MYSQL_DATABASE=bluerange'
-      - 'MYSQL_ROOT_PASSWORD=root-database-pwd-change-me'
+      - 'MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PWD:-root-database-pwd-change-me}'
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
       interval: 30s
@@ -70,7 +69,7 @@ services:
   mongodb:
     environment:
       - 'MONGO_INITDB_ROOT_USERNAME=bluerange'
-      - 'MONGO_INITDB_ROOT_PASSWORD=bluerange-mongodb-pwd-change-me'
+      - 'MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
       - 'MONGO_INITDB_DATABASE=bluerange'
     ports:
       - '27018:27017'
