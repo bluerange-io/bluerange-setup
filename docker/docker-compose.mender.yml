@@ -67,7 +67,8 @@ services:
     image: mendersoftware/deployments:${DOCKER_MENDER_DEPLOYMENTS:-1.6.0}
     links:
       - 'mongodb:mongo-deployments'
-    command: server --automigrate
+      - 'storage-proxy:${HOST}'
+    command: server
     volumes:
       - ./ca.pem:/etc/ssl/certs/storage-proxy.crt:ro
 
