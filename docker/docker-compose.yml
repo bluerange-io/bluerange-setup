@@ -2,6 +2,7 @@ version: '2.1'
 services:
 
   bluerange:
+    restart: unless-stopped
     env_file:
       - './server.env'
     environment:
@@ -50,6 +51,7 @@ services:
       - 'mongodb'
 
   database:
+    restart: unless-stopped
     environment:
       - 'MYSQL_PASSWORD=${DATABASE_PWD:-bluerange-database-pwd-change-me}'
       - 'MYSQL_USER=bluerange'
@@ -71,6 +73,7 @@ services:
       - 'mysql:/var/lib/mysql:rw'
 
   mongodb:
+    restart: unless-stopped
     environment:
       - 'MONGO_INITDB_ROOT_USERNAME=bluerange'
       - 'MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
@@ -84,6 +87,7 @@ services:
       - 'mongodb:/data/db:rw'
 
   nginx:
+    restart: unless-stopped
     ports:
       - '443:443'
     expose:
@@ -103,7 +107,7 @@ services:
       - 'nodered'
 
   mosquitto:
-    restart: always
+    restart: unless-stopped
     ports:
       - '1884:1883'
       - '8884:8883'
@@ -122,6 +126,7 @@ services:
       - 'bluerange:relution'
 
   nodered:
+    restart: unless-stopped
     ports:
       - '1881:1880'
     expose:

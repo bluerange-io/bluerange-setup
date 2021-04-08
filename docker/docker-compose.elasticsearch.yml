@@ -2,6 +2,7 @@ version: '2.1'
 services:
 
   elasticsearch:
+    restart: unless-stopped
     environment:
       - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
       - 'cluster.name=bluerange'
@@ -22,6 +23,7 @@ services:
       - 'elasticsearch:/usr/share/elasticsearch/data:rw'
 
   kibana:
+    restart: unless-stopped
     environment:
       # see https://aws.amazon.com/de/blogs/opensource/add-ssl-certificates-open-distro-for-elasticsearch/
       # see https://www.elastic.co/guide/en/kibana/5.0/_configuring_kibana_on_docker.html
@@ -45,6 +47,7 @@ services:
       - 'elasticsearch'
 
   logagent:
+    restart: unless-stopped
     environment:
       - 'LOGS_RECEIVER_URL=https://admin:admin@elasticsearch:9200'
       - 'LOGS_TOKEN=bluerange'

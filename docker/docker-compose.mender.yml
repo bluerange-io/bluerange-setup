@@ -2,6 +2,7 @@ version: '2.1'
 services:
 
   mender-redis:
+    restart: unless-stopped
     image: redis:3.2.11-alpine
     ports:
       - '6380:6379'
@@ -12,6 +13,7 @@ services:
     entrypoint: /redis/entrypoint.sh
 
   mender-conductor:
+    restart: unless-stopped
     environment:
       - 'CONFIG_PROP=config.properties'
     image: mendersoftware/mender-conductor:${DOCKER_MENDER_CONDUCTOR:-1.2.0}
@@ -22,6 +24,7 @@ services:
       - 'mender-redis'
 
   minio:
+    restart: unless-stopped
     environment:
       - 'MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-mender-deployments}'
       - 'MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minio-secret-change-me}'
@@ -31,6 +34,7 @@ services:
     command: server /export
 
   storage-proxy:
+    restart: unless-stopped
     image: openresty/openresty:${DOCKER_OPENRESTY:-1.13.6.2-0-alpine}
     links:
       - minio
@@ -45,6 +49,7 @@ services:
       - ./server.key:/var/www/storage-proxy/cert/private.key:ro
 
   mender-deployments:
+    restart: unless-stopped
     environment:
       - 'DEPLOYMENTS_MONGO_USERNAME=bluerange'
       - 'DEPLOYMENTS_MONGO_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
@@ -67,11 +72,13 @@ services:
       - ./ca.pem:/etc/ssl/certs/storage-proxy.crt:ro
 
   mender-gui:
+    restart: unless-stopped
     environment:
       - 'INTEGRATION_VERSION'
     image: mendersoftware/gui:${DOCKER_MENDER_GUI:-1.7.0}
 
   mender-api-gateway:
+    restart: unless-stopped
     environment:
       - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
       - 'ALLOWED_HOSTS=${HOST}:444'
@@ -91,6 +98,7 @@ services:
     entrypoint: ["/entrypoint-no-http2.sh"]
 
   mender-device-auth:
+    restart: unless-stopped
     environment:
       - 'DEVICEAUTH_MONGO_USERNAME=bluerange'
       - 'DEVICEAUTH_MONGO_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
@@ -102,6 +110,7 @@ services:
       - ./server.rsa:/etc/deviceauth/rsa/private.pem:ro
 
   mender-inventory:
+    restart: unless-stopped
     environment:
       - 'INVENTORY_MONGO_USERNAME=bluerange'
       - 'INVENTORY_MONGO_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
@@ -111,6 +120,7 @@ services:
     command: server --automigrate
 
   mender-useradm:
+    restart: unless-stopped
     environment:
       - 'USERADM_MONGO_USERNAME=bluerange'
       - 'USERADM_MONGO_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
