@@ -25,8 +25,9 @@ Except of nginx HTTPS, these ports are all off-by-one from their respective defa
 The compose scripts expect that the following files are provided:
 
 - `server.env`: environment variable file containing the host machine name as registered in DNS and mail server configuration
-- `server.pem`: certificate chain used for HTTPS which must match the host machine name registered with DNS
+- `server.pem`: certificate used for HTTPS which must match the host machine name registered with DNS
 - `server.key`: private key for issuing the HTTPS certificate
+- `ca.pem`: additional CA certificate(s) used for signing the `server.pem` so that all of those PEMs form a full chain of trust
 
 The `server.env` file should look like this:
 
@@ -40,7 +41,7 @@ SMTP_PASSWORD=XXXXXXXX
 
 The HTTPS certificate required may be generated using <https://letsencrypt.org/>. Please make sure to have a property DNS record set up for your workstation.
 
-In case no HTTPS certificate is found the [bluerange-compose.sh](bluerange-compose.sh) script will set up a certificate authority interactively. Secure connections using this mechanism require installation of the `ca.pem` file created as a trusted ca onto all IoT gateways, mobile and browser clients.
+In case no HTTPS certificate is found the [bluerange-compose.sh](bluerange-compose.sh) script will set up a certificate authority interactively. Secure connections using this mechanism require installation of the `ca.pem` file created as a trusted CA onto all IoT gateways, mobile and browser clients.
 
 ## Optional configuration
 
