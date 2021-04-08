@@ -64,9 +64,7 @@ services:
       - '3307:3306'
     expose:
       - '3306'
-    # MariaDB 10.4.9 and 10.4.10 is currently not supported. Please use MariaDB 10.4.8.
-    #image: mariadb:latest
-    image: mariadb:10.4.8
+    image: mariadb:latest
     volumes:
       - './initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro'
       - './database.cnf:/etc/mysql/conf.d/database.cnf:ro'
