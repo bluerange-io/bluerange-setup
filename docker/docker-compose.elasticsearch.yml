@@ -14,7 +14,7 @@ services:
     expose:
       - '9200'
       - '9600'
-    image: amazon/opendistro-for-elasticsearch:1.1.0
+    image: amazon/opendistro-for-elasticsearch:${DOCKER_ELASTICSEARCH:-1.1.0}
     volumes:
       - './elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro'
       - './fullchain.pem:/usr/share/elasticsearch/config/server.pem:ro'
@@ -37,7 +37,7 @@ services:
       - '5602:5601'
     expose:
       - '5601'
-    image: amazon/opendistro-for-elasticsearch-kibana:1.1.0
+    image: amazon/opendistro-for-elasticsearch-kibana:${DOCKER_KIBANA:-1.1.0}
     volumes:
       - './fullchain.pem:/usr/share/kibana/config/server.pem:ro'
       - './server.key:/usr/share/kibana/config/server.key:ro'
@@ -53,7 +53,7 @@ services:
       - 'LOGSENE_ENABLED=false'
     cap_add:
       - SYS_ADMIN
-    image: sematext/logagent:3.0.2
+    image: sematext/logagent:${DOCKER_LOGAGENT:-3.0.2}
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     links:

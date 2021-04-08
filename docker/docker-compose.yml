@@ -41,7 +41,7 @@ services:
       - '7800'
       - '8080'
       - '8099'
-    image: bluerange/bluerange:latest
+    image: bluerange/bluerange:${DOCKER_BLUERANGE:-latest}
     volumes:
       # mount folder of trusted CAs
       - './anchors:/etc/pki/ca-trust/source/anchors:ro'
@@ -64,7 +64,7 @@ services:
       - '3307:3306'
     expose:
       - '3306'
-    image: mariadb:latest
+    image: mariadb:${DOCKER_MARIADB:-latest}
     volumes:
       - './initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro'
       - './database.cnf:/etc/mysql/conf.d/database.cnf:ro'
@@ -79,7 +79,7 @@ services:
       - '27018:27017'
     expose:
       - '27017'
-    image: mongo:latest
+    image: mongo:${DOCKER_MONGO:-latest}
     volumes:
       - 'mongodb:/data/db:rw'
 
@@ -89,7 +89,7 @@ services:
     expose:
       - '80'
       - '443'
-    image: nginx:latest
+    image: nginx:${DOCKER_NGINX:-latest}
     #command: /bin/bash -c "nginx-debug -g 'daemon off;'"
     volumes:
       - './nginx.conf:/etc/nginx/nginx.conf:ro'
@@ -112,7 +112,7 @@ services:
       - '1883'
       - '8883'
       - '9001'
-    image: relution/relution-mosquitto:latest
+    image: relution/relution-mosquitto:${DOCKER_MOSQUITTO:-latest}
     volumes:
       #- './mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro'
       - './server.key:/etc/mosquitto/server.key:ro'
@@ -126,7 +126,7 @@ services:
       - '1881:1880'
     expose:
       - '1880'
-    image: nodered/node-red:latest
+    image: nodered/node-red:${DOCKER_NODERED:-latest}
     volumes:
       - 'nodered:/data:rw'
     links:
