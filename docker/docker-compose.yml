@@ -29,6 +29,8 @@ services:
       - 'ORGA_ADMIN_USERNAME=admin'
       - 'ORGA_ADMIN_GIVENNAME=IOT'
       - 'ORGA_ADMIN_SURNAME=Administrator'
+      - 'ORGA_ADMIN_PASSWORD=${ORGA_ADMIN_PASSWORD:-iot12345}'
+      - 'SYSTEM_ADMIN_PASSWORD=${SYSTEM_ADMIN_PASSWORD:-admin123}'
     depends_on:
       database:
         condition: service_healthy
