@@ -63,7 +63,7 @@ services:
       timeout: 10s
       retries: 5
     ports:
-      - '3307:3306'
+      - '${PORT_MARIADB:-127.0.0.1:3306}:3306'
     expose:
       - '3306'
     image: mariadb:${DOCKER_MARIADB:-latest}
@@ -79,7 +79,7 @@ services:
       - 'MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
       - 'MONGO_INITDB_DATABASE=bluerange'
     ports:
-      - '27018:27017'
+      - '${PORT_MONGO:-127.0.0.1:27017}:27017'
     expose:
       - '27017'
     image: mongo:${DOCKER_MONGO:-latest}
