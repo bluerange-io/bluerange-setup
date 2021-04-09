@@ -206,9 +206,9 @@ EOF
   echo ""
   echo "    BlueRange: https://${HOST}:443  (admin / ${SYSTEM_ADMIN_PASSWORD})"
   echo "       Mender: https://${HOST}:444  (admin@${HOST} / ${SYSTEM_ADMIN_PASSWORD})"
-  echo "       Kibana: https://${HOST}:5602 (admin / admin)"
+  echo "       Kibana: https://${HOST}:${PORT_KIBANA:-5601} (admin / admin)"
   echo "        Minio: https://${HOST}:9000 (${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY})"
-  echo "ElasticSearch: https://${HOST}:9201 (admin / admin)"
+  echo "ElasticSearch: https://${HOST}:${PORT_ELASTICSEARCH_9200:-9200} (admin / admin)"
   exit 0
 fi
 
