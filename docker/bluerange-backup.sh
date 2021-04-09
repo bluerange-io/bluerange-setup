@@ -43,4 +43,6 @@ pushd backup
 tar --gzip -cvf bluerange-${NOW}.tar.gz bluerange-${NOW}
 rm -rf bluerange-${NOW}
 popd
+echo "$ chmod go-r backup/bluerange-${NOW}.tar.gz"
+chmod go-r backup/bluerange-${NOW}.tar.gz
 echo "* backup/bluerange-${NOW}.tar.gz"
