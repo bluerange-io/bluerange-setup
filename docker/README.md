@@ -9,16 +9,16 @@ The volumes `mysql` and `mongodb` are set up in order not to lose data stored wh
 The following ports are available on the hosting machine:
 
 - 443: HTTPS of `nginx`
-- 1881: Node Red HTTP service of `nodered`
-- 1884: MQTT using TCP of `mosquitto`
-- 3307: MySQL service of `database`
-- 8081: BlueRange UI of `bluerange`
-- 8100: Spring Actuators of `bluerange`
-- 8884: MQTT using SSL of `mosquitto`
-- 9002: MQTT over WebSockets of `mosquitto`
-- 27018: MongoDB service of `mongodb`
+- 1880: Node Red HTTP service of `nodered`
+- 1883: MQTT using TCP of `mosquitto`, bound to docker host only
+- 3306: MySQL service of `database`, bound to docker host only
+- 8080: BlueRange UI of `bluerange`, bound to docker host only
+- 8099: Spring Actuators of `bluerange`, bound to docker host only
+- 8883: MQTT using SSL of `mosquitto`
+- 9001: MQTT over WebSockets of `mosquitto`
+- 27017: MongoDB service of `mongodb`, bound to docker host only
 
-Except of nginx HTTPS, these ports are all off-by-one from their respective defaults to avoid collisions with locally running services on the hosting machine.
+Ports not required for operation but for diagnostics only are bound to the docker host only. All port mappings may be customized by overwriting them in the `server.env` file. The names of those custom port mappings can be looked up in [.env](.env) and are prefixed by `PORT_`.
 
 ## Required configuration
 
@@ -49,52 +49,15 @@ The [docker-compose.yml](docker-compose.yml) contains commented sections for run
 
 ## Appliance configuration
 
-So far the configuration above offers a fully functioning BlueRange server environment for testing and/or development purposes. In production scenarios logging and update servers are required as well.
+The configuration offers a fully functioning BlueRange server environment suitable for production as well as for testing and/or development purposes. The logging and update servers are included as well.
 
-Typically a logging server such as an ELK installation exists in the IT infrastructure hosting BlueRange already and shall be reused. As update server mostly the publically available cloud service is used.
-
-### Logging server
-
-In case an additional Elasticsearch logging server must be set up, the file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains the relevant additional services required, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
-
-```sh
-# start both compose files
-$ docker-compose -f docker-compose.yml -f docker-compose.elasticsearch.yml up -d
-```
-
-In order to let the mesh gateway devices know about the custom logging server, a configuration policy must be applied in the platform.
-
-### Update server
-
-Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated update server.
-
-Notice, some Mender microservices require the HTTPS private key in PKCS#1 format which is taken care of below as well:
-
-```sh
-# convert server.key to RSA
-openssl rsa -inform PEM -in server.key -out server.rsa
-
-# start BlueRange IoT server and the update server
-$ docker-compose -f docker-compose.yml -f docker-compose.mender.yml up -d
-```
-
-Once started the update server is available via HTTPS at port 444, i.e. <https://my-machine.my-domain.me:444>. In order to log into the server an initial user account must be created explicitly:
-
-```sh
-# create user admin@my-machine.my-domain.me
-$ docker-compose exec -T mender-useradm useradm create-user --username=admin@my-machine.my-domain.me --password=admin123
-```
-
-In order to let the mesh gateway devices know about the custom update server, a configuration policy must be applied in the platform.
+In case a logging server such as an ELK installation exists in the IT infrastructure hosting BlueRange already it should be reused. As update server the publically available cloud service of M-Way Solutions GmbH may be used as well.
 
 ### BlueRange software stack
 
-Finally to help getting started with a fully self-administered on-premise setup including all of BlueRange, logging and update servers the entire software stack can be started at once:
+To help getting started with a fully self-administered on-premise setup including all of BlueRange, logging and update servers the entire software stack can be started at once:
 
 ```sh
-# convert server.key to PKCS#8
-$ openssl pkcs8 -topk8 -inform PEM -in server.key -out server.pk8 -nocrypt
-
 # start all-in-one BlueRange software stack
 $ ./bluerange-compose.sh
 
@@ -125,6 +88,25 @@ $ ./bluerange-compose.sh down
 ```
 
 Further customization should be done using the `docker-compose.override.yml` mechanism, see <https://docs.docker.com/compose/extends/>.
+
+### Logging server
+
+The file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains an ElasticSearch stack, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
+
+In order to let the mesh gateway devices know about the custom logging server, a configuration policy must be applied in the platform.
+
+### Update server
+
+Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated update server.
+
+Once started the update server is available via HTTPS at port 444, i.e. <https://my-machine.my-domain.me:444>. In order to log into the server an initial user account is created by `bluerange-compose.sh` automatically. Additional users may be registered interactively in the Mender UI or like this:
+
+```sh
+# create user admin@my-machine.my-domain.me
+$ ./bluerange-compose.sh exec -T mender-useradm useradm create-user --username=admin@my-machine.my-domain.me --password=admin123
+```
+
+In order to let the mesh gateway devices know about the custom update server, a configuration policy must be applied in the platform.
 
 ## Beacons and the Mesh Gateway
 
