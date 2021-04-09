@@ -2,7 +2,7 @@
 set -e
 cd $(dirname ${BASH_SOURCE:-$0})
 
-export NOW=$(date +%s)
+export NOW=$(date +"%Y%m%d_%H%M%S")
 mkdir backup/bluerange-${NOW}
 
 # backup of mongodb
