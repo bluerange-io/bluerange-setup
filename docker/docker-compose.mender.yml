@@ -3,9 +3,9 @@ services:
 
   mender-redis:
     restart: unless-stopped
-    image: redis:3.2.11-alpine
+    image: redis:${DOCKER_REDIS:-3.2.11-alpine}
     ports:
-      - '6380:6379'
+      - '${PORT_REDIS:-6379}:6379'
     volumes:
       - redis:/var/lib/redis:rw
       - ./conductor/redis/redis.conf:/etc/redis/redis.conf:ro
@@ -39,7 +39,7 @@ services:
     links:
       - minio
     ports:
-      - "9000:9000"
+      - "${PORT_MINIO:-9000}:9000"
     environment:
       - 'DOWNLOAD_SPEED=5m'
       - 'MAX_CONNECTIONS=50'
@@ -63,7 +63,7 @@ services:
       # storage-proxy using exactly the same name as devices will; if
       # devices will access storage using https://s3.acme.org:9000, then
       # set this to https://s3.acme.org:9000
-      - 'DEPLOYMENTS_AWS_URI=https://${HOST}:9000'
+      - 'DEPLOYMENTS_AWS_URI=https://${HOST}:${PORT_MINIO:-9000}'
     image: mendersoftware/deployments:${DOCKER_MENDER_DEPLOYMENTS:-1.6.0}
     links:
       - 'mongodb:mongo-deployments'
@@ -82,7 +82,7 @@ services:
     restart: unless-stopped
     environment:
       - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
-      - 'ALLOWED_HOSTS=${HOST}:444'
+      - 'ALLOWED_HOSTS=${HOST}:${PORT_MENDER:-444}'
     image: mendersoftware/api-gateway:${DOCKER_MENDER_API_GATEWAY:-1.6.0}
     links:
       - mender-device-auth
@@ -91,7 +91,7 @@ services:
       - mender-useradm
       - mender-inventory
     ports:
-      - '444:443'
+      - '${PORT_MENDER:-444}:443'
     volumes:
       - ./fullchain.pem:/var/www/mendersoftware/cert/cert.crt:ro
       - ./server.key:/var/www/mendersoftware/cert/private.key:ro

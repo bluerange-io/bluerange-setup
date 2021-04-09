@@ -89,7 +89,7 @@ services:
   nginx:
     restart: unless-stopped
     ports:
-      - '443:443'
+      - '${PORT_BLUERANGE:-443}:443'
     expose:
       - '80'
       - '443'

@@ -10,7 +10,7 @@ services:
     labels:
       - 'LOGSENE_ENABLED=false'
     ports:
-      - '${PORT_ELASTICSEARCH_9200:-9200}:9200'
+      - '${PORT_ELASTICSEARCH:-9200}:9200'
       - '${PORT_ELASTICSEARCH_9600:-127.0.0.1:9600}:9600'
     expose:
       - '9200'
