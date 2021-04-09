@@ -2,32 +2,17 @@
 
 Required companion files for setting up BlueRange on various platforms. Detailed installation instructions can be found [here](https://www.bluerange.io/docs/bluerange-installguide/index.html).
 
-## Supported platforms
+## Platforms
 
-BlueRange is available on both Linux and Windows platforms. We recommend the use of Linux.
+BlueRange runs dockerized and has been verified to work with:
 
-### Linux
+- CentOS 7 or newer
+- Debian 10 or newer
+- Ubuntu 18.04 or newer
 
-BlueRange has been verified to work with:
+BlueRange should work on any Linux distribution that supports `systemd` and `docker` but this has not been verified. If you wish to receive support, please ensure that you run BlueRange on a supported platform.
 
-- CentOS 7.5
-- Red Hat Enterprise Linux 7.5
-- SUSE Linux Enterprise Server 12
-
-BlueRange should work on any Linux distribution that supports `systemd` but this has not been verified and is not currently supported. If you wish to receive support, please ensure that you run BlueRange on a supported platform.
-
-### Windows
-
-BlueRange has been verified to work with:
-
-- Windows Server 2008 R2
-- Windows Server 2012
-- Windows Server 2012 R2
-- Windows Server 2016
-
-BlueRange should work on any recent version of Windows but this has not been verified and is not currently supported. If you wish to receive support, please ensure that you run BlueRange on a supported platform.
-
-## Supported databases
+## Databases
 
 BlueRange has been verified to work with:
 
