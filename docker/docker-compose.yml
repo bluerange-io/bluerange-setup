@@ -36,8 +36,8 @@ services:
       database:
         condition: service_healthy
     ports:
-      - '8081:8080'
-      - '8100:8099'
+      - '${PORT_BLUERANGE_8080:-127.0.0.1:8080}:8080'
+      - '${PORT_BLUERANGE_8099:-127.0.0.1:8099}:8099'
     expose:
       - '7800'
       - '8080'
@@ -128,7 +128,7 @@ services:
   nodered:
     restart: unless-stopped
     ports:
-      - '1881:1880'
+      - '${PORT_NODERED:-127.0.0.1:1880}:1880'
     expose:
       - '1880'
     image: nodered/node-red:${DOCKER_NODERED:-latest}
