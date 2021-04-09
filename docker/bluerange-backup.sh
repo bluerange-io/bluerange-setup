@@ -29,9 +29,8 @@ MYSQL_ROOT_PASSWORD=$(./bluerange-compose.sh exec -T database printenv MYSQL_ROO
     >backup/bluerange-${NOW}/mariadb.sql
 
 # server configuration
-echo "$ tar -cvf backup/bluerange-${NOW}/server.tar --transform 's,^,server/,' server.* ca.* cert.* serial* newcerts/*"
+echo "$ tar -cvf backup/bluerange-${NOW}/server.tar server.* ca.* cert.* serial* newcerts/*"
 tar -cvf backup/bluerange-${NOW}/server.tar \
-    --transform 's,^,server/,' \
     server.* \
     ca.* \
     cert.* \
