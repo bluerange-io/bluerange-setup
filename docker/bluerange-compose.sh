@@ -2,9 +2,6 @@
 set -e
 cd $(dirname ${BASH_SOURCE:-$0})
 
-DOCKER_COMPOSE="docker-compose -p bluerange -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
-export BLUERANGE_COMPOSE_SH=1
-
 set -a
 . ./.env
 if [ -f ./server.env ] ; then
@@ -18,8 +15,11 @@ if [ -z "$HOST" ] ; then
   echo "Please follow instructions given in README.md for setting up your environment."
   exit 1
 fi
-mkdir -p anchors
 
+DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
+export BLUERANGE_COMPOSE_SH=1
+
+mkdir -p anchors
 if [ $# -eq 0 ] ; then
   # HTTPS setup using self-signed certificates
   if [ ! -f ./server.key ] ; then
