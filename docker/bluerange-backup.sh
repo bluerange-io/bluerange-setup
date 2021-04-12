@@ -5,6 +5,16 @@ cd $(dirname ${BASH_SOURCE:-$0})
 export NOW=$(date +"%Y%m%d_%H%M%S")
 mkdir backup/bluerange-${NOW}
 
+# backup of mariadb
+echo "$ mysqldump --compress --single-transaction --all-databases >backup/bluerange-${NOW}/mariadb.sql"
+MYSQL_ROOT_PASSWORD=$(./bluerange-compose.sh exec -T database printenv MYSQL_ROOT_PASSWORD | tr -d [:space:])
+./bluerange-compose.sh exec -T database mysqldump \
+    --password=${MYSQL_ROOT_PASSWORD} \
+    --compress \
+    --single-transaction \
+    --all-databases \
+    >backup/bluerange-${NOW}/mariadb.sql
+
 # backup of mongodb
 echo "$ mongodump --out=backup/bluerange-${NOW}/mongodb"
 MONGO_INITDB_ROOT_USERNAME=$(./bluerange-compose.sh exec -T mongodb printenv MONGO_INITDB_ROOT_USERNAME | tr -d [:space:])
@@ -17,16 +27,6 @@ pushd backup/bluerange-${NOW}
 tar -cvf mongodb.tar mongodb
 rm -rf mongodb
 popd
-
-# backup of mariadb
-echo "$ mysqldump --compress --single-transaction --all-databases >backup/bluerange-${NOW}/mariadb.sql"
-MYSQL_ROOT_PASSWORD=$(./bluerange-compose.sh exec -T database printenv MYSQL_ROOT_PASSWORD | tr -d [:space:])
-./bluerange-compose.sh exec -T database mysqldump \
-    --password=${MYSQL_ROOT_PASSWORD} \
-    --compress \
-    --single-transaction \
-    --all-databases \
-    >backup/bluerange-${NOW}/mariadb.sql
 
 # server configuration
 echo "$ tar -cvf backup/bluerange-${NOW}/server.tar server.* ca.* cert.* serial* newcerts/*"
