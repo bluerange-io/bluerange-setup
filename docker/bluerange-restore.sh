@@ -2,6 +2,13 @@
 set -e
 cd $(dirname ${BASH_SOURCE:-$0})
 
+if [[ -z "$1" || "$1" == "-?" || "$1" == "--help" ]]
+then
+    export NOW=$(date +"%Y%m%d_%H%M%S")
+    echo "Please pass backup archive to restore:"
+    echo "$ ./bluerange-restore.sh backup/bluerange-${NOW}.tar.gz"
+    [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
+fi
 export ARCHIVE=$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
 export FOLDER=$(basename -s .tar.gz ${ARCHIVE})
 
