@@ -71,6 +71,7 @@ services:
       - './initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro'
       - './database.cnf:/etc/mysql/conf.d/database.cnf:ro'
       - 'mysql:/var/lib/mysql:rw'
+      - './backup:/backup:rw'
 
   mongodb:
     restart: unless-stopped
@@ -85,6 +86,7 @@ services:
     image: mongo:${DOCKER_MONGO:-latest}
     volumes:
       - 'mongodb:/data/db:rw'
+      - './backup:/backup:rw'
 
   nginx:
     restart: unless-stopped
