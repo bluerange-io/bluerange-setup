@@ -108,6 +108,32 @@ $ ./bluerange-compose.sh exec -T mender-useradm useradm create-user --username=a
 
 In order to let the mesh gateway devices know about the custom update server, a configuration policy must be applied in the platform.
 
+## Backup and Restore
+
+The script `bluerange-backup.sh` allows saving the database content and server configuration into a single file:
+
+```sh
+$ ./bluerange-backup.sh
+...
+* backup/bluerange-20210421_132111.tar.gz
+```
+
+The backup file can be uploaded to some permanent storage such as S3. The script is intended to run regularly using cron, for example.
+
+The `bluerange-restore.sh` script allows restoring the installation given a fresh working copy:
+
+```sh
+$ ./bluerange-restore.sh backup/bluerange-20210421_132111.tar.gz
+All existing BlueRange server data will be erased!
+Are you sure to restore from bluerange-20210421_132111?
+Type YES: YES
+...
+Backup bluerange-20210421_132111 restored.
+* ./bluerange-compose.sh to start the server...
+```
+
+Finally start the server using `bluerange-compose.sh` once so that the system services are installed.
+
 ## Beacons and the Mesh Gateway
 
 By default, the environment is set up automatically creating an organization named `IOT`. It is expected to enroll IoT things therein. To log on use username `admin` and password `iot12345`.
