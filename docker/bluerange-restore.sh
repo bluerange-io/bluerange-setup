@@ -45,6 +45,14 @@ tar -xvf backup/restore/${FOLDER}/server.tar
     database \
     mongodb
 
+# wait for database
+MYSQL_USER=$(./bluerange-compose.sh exec -T database printenv MYSQL_USER | tr -d [:space:])
+MYSQL_PASSWORD=$(./bluerange-compose.sh exec -T database printenv MYSQL_PASSWORD | tr -d [:space:])
+MYSQL_DATABASE=$(./bluerange-compose.sh exec -T database printenv MYSQL_DATABASE | tr -d [:space:])
+while ! echo "SELECT 'Database is ready now! (Please ignore afore errors.)';" | ./bluerange-compose.sh exec -T database mysql --user="${MYSQL_USER}" --password="${MYSQL_PASSWORD}" --database="${MYSQL_DATABASE}" --wait; do
+    sleep 1
+done
+
 # restore mongodb
 echo "$ mongorestore --dir=backup/restore/${FOLDER}/mongodb"
 pushd backup/restore/${FOLDER}
@@ -61,7 +69,7 @@ MONGO_INITDB_ROOT_PASSWORD=$(./bluerange-compose.sh exec -T mongodb printenv MON
 echo "$ mysql <backup/restore/${FOLDER}/mariadb.sql"
 MYSQL_ROOT_PASSWORD=$(./bluerange-compose.sh exec -T database printenv MYSQL_ROOT_PASSWORD | tr -d [:space:])
 ./bluerange-compose.sh exec -T database mysql \
-    --password=${MYSQL_ROOT_PASSWORD} \
+    --password="${MYSQL_ROOT_PASSWORD}" \
     <backup/restore/${FOLDER}/mariadb.sql
 
 # cleanup
