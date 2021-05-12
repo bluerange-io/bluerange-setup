@@ -49,6 +49,12 @@ services:
     links:
       - 'database'
       - 'mongodb'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_BLUERANGE_LOGSIZE:-64m}'
+        max-file: '4'
+        compress: 'true'
 
   database:
     restart: unless-stopped
@@ -72,6 +78,12 @@ services:
       - './database.cnf:/etc/mysql/conf.d/database.cnf:ro'
       - 'mysql:/var/lib/mysql:rw'
       - './backup:/backup:rw'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MARIADB_LOGSIZE:-32m}'
+        max-file: '4'
+        compress: 'true'
 
   mongodb:
     restart: unless-stopped
@@ -87,6 +99,12 @@ services:
     volumes:
       - 'mongodb:/data/db:rw'
       - './backup:/backup:rw'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MONGO_LOGSIZE:-32m}'
+        max-file: '4'
+        compress: 'true'
 
   nginx:
     restart: unless-stopped
@@ -107,6 +125,12 @@ services:
       - 'bluerange'
       - 'mosquitto'
       - 'nodered'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_NGINX_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
 
   mosquitto:
     restart: unless-stopped
@@ -126,6 +150,12 @@ services:
     links:
       # relution-mosquitto image assumes relution as authentication server
       - 'bluerange:relution'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MOSQUITTO_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
 
   nodered:
     restart: unless-stopped
@@ -141,6 +171,12 @@ services:
       - 'mosquitto'
       - 'database'
       - 'mongodb'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_NODERED_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
 
 volumes:
   mysql:

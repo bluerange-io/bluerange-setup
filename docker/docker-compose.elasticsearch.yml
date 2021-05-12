@@ -21,6 +21,12 @@ services:
       - './fullchain.pem:/usr/share/elasticsearch/config/server.pem:ro'
       - './server.key:/usr/share/elasticsearch/config/server.key:ro'
       - 'elasticsearch:/usr/share/elasticsearch/data:rw'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_ELASTICSEARCH_LOGSIZE:-32m}'
+        max-file: '4'
+        compress: 'true'
 
   kibana:
     restart: unless-stopped
@@ -45,6 +51,12 @@ services:
       - './server.key:/usr/share/kibana/config/server.key:ro'
     links:
       - 'elasticsearch'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_KIBANA_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
 
   logagent:
     restart: unless-stopped
@@ -61,6 +73,12 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     links:
       - 'elasticsearch'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_LOGAGENT_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
 volumes:
   elasticsearch:

@@ -11,6 +11,12 @@ services:
       - ./conductor/redis/redis.conf:/etc/redis/redis.conf:ro
       - ./conductor/redis/entrypoint.sh:/redis/entrypoint.sh:ro
     entrypoint: /redis/entrypoint.sh
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_REDIS_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   mender-conductor:
     restart: unless-stopped
@@ -22,6 +28,12 @@ services:
     links:
       - 'elasticsearch'
       - 'mender-redis'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MENDER_CONDUCTOR_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   minio:
     restart: unless-stopped
@@ -32,6 +44,12 @@ services:
     volumes:
       - mender-artifacts:/export:rw
     command: server /export
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MINIO_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
 
   storage-proxy:
     restart: unless-stopped
@@ -47,6 +65,12 @@ services:
       - ./storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
       - ./fullchain.pem:/var/www/storage-proxy/cert/cert.crt:ro
       - ./server.key:/var/www/storage-proxy/cert/private.key:ro
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_OPENRESTY_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   mender-deployments:
     restart: unless-stopped
@@ -71,12 +95,24 @@ services:
     command: server
     volumes:
       - ./ca.pem:/etc/ssl/certs/storage-proxy.crt:ro
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MENDER_DEPLOYMENTS_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   mender-gui:
     restart: unless-stopped
     environment:
       - 'INTEGRATION_VERSION'
     image: mendersoftware/gui:${DOCKER_MENDER_GUI:-1.7.0}
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MENDER_GUI_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   mender-api-gateway:
     restart: unless-stopped
@@ -97,6 +133,12 @@ services:
       - ./server.key:/var/www/mendersoftware/cert/private.key:ro
       - ./entrypoint-no-http2.sh:/entrypoint-no-http2.sh
     entrypoint: ["/entrypoint-no-http2.sh"]
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MENDER_API_GATEWAY_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   mender-device-auth:
     restart: unless-stopped
@@ -109,6 +151,12 @@ services:
     command: server --automigrate
     volumes:
       - ./server.rsa:/etc/deviceauth/rsa/private.pem:ro
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MENDER_DEVICEAUTH_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   mender-inventory:
     restart: unless-stopped
@@ -119,6 +167,12 @@ services:
     links:
       - 'mongodb:mongo-inventory'
     command: server --automigrate
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MENDER_INVENTORY_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   mender-useradm:
     restart: unless-stopped
@@ -131,6 +185,12 @@ services:
     command: server --automigrate
     volumes:
       - ./server.rsa:/etc/useradm/rsa/private.pem:ro
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MENDER_USERADM_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
 volumes:
   redis:
