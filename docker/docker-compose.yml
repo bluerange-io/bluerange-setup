@@ -134,6 +134,9 @@ services:
 
   mosquitto:
     restart: unless-stopped
+    environment:
+      - BLUERANGE_HOSTNAME=bluerange
+      - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-prometheus-change-me}
     ports:
       - '${PORT_MOSQUITTO_MQTT:-127.0.0.1:1883}:1883'
       - '${PORT_MOSQUITTO_MQTTS:-8883}:8883'
@@ -148,8 +151,10 @@ services:
       - './server.key:/etc/mosquitto/server.key:ro'
       - './fullchain.pem:/etc/mosquitto/server.pem:ro'
     links:
-      # relution-mosquitto image assumes relution as authentication server
-      - 'bluerange:relution'
+      - bluerange
+    ulimits:
+      nofile: 100000
+      nproc: 100000
     logging:
       driver: 'json-file'
       options:
