@@ -187,9 +187,6 @@ EOF
     fi
   fi
   if [ ! -f server.rsa ] ; then
-    # workaround Kibana permission problem <https://discuss.opendistrocommunity.dev/t/certificate-permissions-with-docker/718>
-    chgrp 1000 server.key
-    chmod 640 server.key
     echo "$" openssl rsa -inform PEM -in server.key -out server.rsa
     openssl rsa -inform PEM -in server.key -out server.rsa
   fi

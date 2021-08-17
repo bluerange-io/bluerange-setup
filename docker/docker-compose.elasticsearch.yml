@@ -1,7 +1,8 @@
-version: '2.1'
+version: '3.9'
 services:
 
   elasticsearch:
+    command: /scripts/setKeyPermsAndStartEntryPoint.sh
     restart: unless-stopped
     environment:
       - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
@@ -18,8 +19,9 @@ services:
     image: amazon/opendistro-for-elasticsearch:${DOCKER_ELASTICSEARCH:-1.1.0}
     volumes:
       - './elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro'
-      - './fullchain.pem:/usr/share/elasticsearch/config/server.pem:ro'
-      - './server.key:/usr/share/elasticsearch/config/server.key:ro'
+      - './fullchain.pem:/usr/share/elasticsearch/config/server.pem.copy:ro'
+      - './server.key:/usr/share/elasticsearch/config/server.key.copy:ro'
+      - ./scripts:/scripts:ro
       - 'elasticsearch:/usr/share/elasticsearch/data:rw'
     logging:
       driver: 'json-file'
