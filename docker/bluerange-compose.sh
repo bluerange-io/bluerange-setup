@@ -17,6 +17,9 @@ if [ -z "$HOST" ] ; then
 fi
 
 DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
+if [ -f "docker-compose.override.yml" ]; then
+ DOCKER_COMPOSE="$DOCKER_COMPOSE -f docker-compose.override.yml"
+fi
 export BLUERANGE_COMPOSE_SH=1
 
 mkdir -p anchors
@@ -209,4 +212,4 @@ EOF
   exit 0
 fi
 
-exec $DOCKER_COMPOSE $*
+exec $DOCKER_COMPOSE "$@"
