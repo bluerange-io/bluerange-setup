@@ -16,7 +16,7 @@ if [ -z "$HOST" ] ; then
   exit 1
 fi
 
-DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
+DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml -f docker-compose.prometheus.yml"
 export BLUERANGE_COMPOSE_SH=1
 
 mkdir -p anchors
@@ -206,6 +206,7 @@ EOF
   echo "       Kibana: https://${HOST}:${PORT_KIBANA:-5601} (admin / admin)"
   echo "        Minio: https://${HOST}:${PORT_MINIO:-9000} (${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY})"
   echo "ElasticSearch: https://${HOST}:${PORT_ELASTICSEARCH:-9200} (admin / admin)"
+  echo "      Grafana: https://${HOST}:${PORT_GRAFANA:-9090} (admin / ${SYSTEM_ADMIN_PASSWORD})"
   exit 0
 fi
 

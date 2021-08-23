@@ -1,0 +1,56 @@
+version: '3.9'
+services:
+
+  prometheus:
+    entrypoint: ["/bin/sh"]
+    command: /scripts/setPrometheusPermsAndStartEntryPoint.sh
+    restart: unless-stopped
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+      - 'cluster.name=bluerange'
+      - 'discovery.type=single-node'
+      - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-prometheus-change-me}
+      - PORT_MOSQUITTO_MQTT=3000
+      - PORT_KIBANA=${PORT_KIBANA}
+      - SYSTEM_ADMIN_PASSWORD=${SYSTEM_ADMIN_PASSWORD}
+    ports:
+      - '${PORT_PROMETHEUS:-9090}:9090'
+    expose:
+      - '9090'
+    image: prom/prometheus:${DOCKER_PROMETHEUS:-v2.12.0}
+    volumes:
+      - ./configs/scripts/setPrometheusPermsAndStartEntryPoint.sh:/scripts/setPrometheusPermsAndStartEntryPoint.sh:ro
+      - './configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+      - 'prometheus:/prometheus:rw'
+    links:
+     - 'bluerange'
+     - 'kibana'
+     - 'mosquitto'
+
+
+  grafana:
+    entrypoint: ["/bin/bash"]
+    command: /scripts/setGrafanaPermsAndStartEntryPoint.sh
+    restart: unless-stopped
+    environment:
+      - 'SYSTEM_ADMIN_PASSWORD=${SYSTEM_ADMIN_PASSWORD}'
+      - 'DATABASE_PWD=${DATABASE_PWD}'
+    ports:
+      - '${PORT_GRAFANA:-3000}:3000'
+    expose:
+      - '3000'
+    image: grafana/grafana:${DOCKER_GRAFANA:-8.1.1}
+    volumes:
+      - ./configs/scripts/setGrafanaPermsAndStartEntryPoint.sh:/scripts/setGrafanaPermsAndStartEntryPoint.sh:ro
+      - ./configs/grafana/grafana.ini:/home/grafana/grafana.ini.template:ro
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-storage:/var/lib/grafana:rw
+    links:
+      - 'prometheus'
+      - 'database'
+
+volumes:
+  prometheus:
+  grafana-storage:
+  grafana-config:
+  grafana-datasources:

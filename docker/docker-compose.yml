@@ -57,12 +57,15 @@ services:
         compress: 'true'
 
   database:
+    entrypoint: ["/bin/bash"]
+    command: /scripts/setMariaDBPermsAndStartEntryPoint.sh
     restart: unless-stopped
     environment:
       - 'MYSQL_PASSWORD=${DATABASE_PWD:-bluerange-database-pwd-change-me}'
       - 'MYSQL_USER=bluerange'
       - 'MYSQL_DATABASE=bluerange'
       - 'MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PWD:-root-database-pwd-change-me}'
+      - 'DATABASE_PWD=${DATABASE_PWD}'
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
       interval: 30s
@@ -74,8 +77,9 @@ services:
       - '3306'
     image: mariadb:${DOCKER_MARIADB:-latest}
     volumes:
-      - './initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro'
-      - './database.cnf:/etc/mysql/conf.d/database.cnf:ro'
+      - ./configs/scripts/setMariaDBPermsAndStartEntryPoint.sh:/scripts/setMariaDBPermsAndStartEntryPoint.sh:ro
+      - './configs/mariadb/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql.template:ro'
+      - './configs/mariadb/database.cnf:/etc/mysql/conf.d/database.cnf:ro'
       - 'mysql:/var/lib/mysql:rw'
       - './backup:/backup:rw'
     logging:
@@ -116,8 +120,8 @@ services:
     image: nginx:${DOCKER_NGINX:-latest}
     #command: /bin/bash -c "nginx-debug -g 'daemon off;'"
     volumes:
-      - './nginx.conf:/etc/nginx/nginx.conf:ro'
-      - './mime.types:/etc/nginx/mime.types:ro'
+      - './configs/nginx.conf:/etc/nginx/nginx.conf:ro'
+      - './configs/mime.types:/etc/nginx/mime.types:ro'
       - './server.key:/etc/nginx/server.key:ro'
       - './fullchain.pem:/etc/nginx/server.pem:ro'
       - './htpasswd:/etc/nginx/htpasswd:ro'
