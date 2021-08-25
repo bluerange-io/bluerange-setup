@@ -8,6 +8,13 @@ if [ -f ./server.env ] ; then
   . ./server.env
   export HOST
 fi
+
+# due to compatibility reasons (use former BlueRange DB password variable 'DATABASE_PWD' if set)
+if [ ! -z "$DATABASE_PWD" ] ; then
+  export BLUERANGE_DB_PASSWORD=${DATABASE_PWD}
+  echo "Note: Deprecated env variable 'DATABASE_PWD' is set. Use 'BLUERANGE_DB_PASSWORD' env variable instead !!"
+fi
+
 set +a
 if [ -z "$HOST" ] ; then
   echo "server.env not found!"
@@ -16,7 +23,7 @@ if [ -z "$HOST" ] ; then
   exit 1
 fi
 
-DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml"
+DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml -f docker-compose.prometheus.yml"
 if [ -f "docker-compose.override.yml" ]; then
  DOCKER_COMPOSE="$DOCKER_COMPOSE -f docker-compose.override.yml"
 fi
@@ -194,10 +201,10 @@ EOF
     openssl rsa -inform PEM -in server.key -out server.rsa
   fi
 
-  echo "$" $DOCKER_COMPOSE up -d
+  echo "->" $DOCKER_COMPOSE up -d
   $DOCKER_COMPOSE up -d
   echo ""
-  echo "mender-useradm$" useradm create-user --username=admin@${HOST} --password=${SYSTEM_ADMIN_PASSWORD}
+  echo "-> mender-useradm$" useradm create-user --username=admin@${HOST} --password=${SYSTEM_ADMIN_PASSWORD}
   $DOCKER_COMPOSE exec -T mender-useradm useradm create-user --username=admin@${HOST} --password=${SYSTEM_ADMIN_PASSWORD} || true
 
   MINIO_ACCESS_KEY=$($DOCKER_COMPOSE exec minio printenv MINIO_ACCESS_KEY | tr -d [:space:] || echo ?)
@@ -206,8 +213,10 @@ EOF
   echo ""
   echo "    BlueRange: https://${HOST}:${PORT_BLUERANGE:-443}  (admin / ${SYSTEM_ADMIN_PASSWORD})"
   echo "       Mender: https://${HOST}:${PORT_MENDER:-444}  (admin@${HOST} / ${SYSTEM_ADMIN_PASSWORD})"
+  echo "      Grafana: https://${HOST}:${PORT_GRAFANA:-3000} (admin / ${SYSTEM_ADMIN_PASSWORD})"
   echo "       Kibana: https://${HOST}:${PORT_KIBANA:-5601} (admin / admin)"
   echo "        Minio: https://${HOST}:${PORT_MINIO:-9000} (${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY})"
+  echo "   Prometheus: http://${HOST}:${PORT_PROMETHEUS:-9090}"
   echo "ElasticSearch: https://${HOST}:${PORT_ELASTICSEARCH:-9200} (admin / admin)"
   exit 0
 fi
