@@ -1,0 +1,42 @@
+    scrape_configs:
+      - job_name: 'mqtt-metrics'
+        basic_auth:
+          username: 'prometheus'
+          password: "$PROMETHEUS_PASSWORD"
+        scheme: 'http'
+        static_configs:
+          - targets:
+            - 'mosquitto:$PORT_MOSQUITTO_MQTT'
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: instance
+            regex: '([^:]+)(:[0-9]+)?'
+            replacement: '${1}'
+
+#      - job_name: 'kibana'
+#        basic_auth:
+#          username: 'readall'
+#          password: 'any-password'
+#        scheme: 'https'
+#        metrics_path: /_prometheus/metrics
+#        static_configs:
+#          - targets:
+#            - 'kibana:${PORT_KIBANA}'
+#        tls_config:
+#          insecure_skip_verify: true
+
+      - job_name: 'bluerange-io'
+        basic_auth:
+          username: 'admin'
+          password: '$SYSTEM_ADMIN_PASSWORD'
+        scheme: 'http'
+        metrics_path: /actuator/prometheus
+        static_configs:
+          - targets:
+            - 'bluerange:8080'
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: instance
+            regex: '([^:]+)(:[0-9]+)?'
+            replacement: '${1}'
+
