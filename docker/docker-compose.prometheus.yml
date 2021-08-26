@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
     environment:
       - 'SYSTEM_ADMIN_PASSWORD=${SYSTEM_ADMIN_PASSWORD}'
-      - 'GRAFANA_DB_PASSWORD=${GRAFANA_DB_PASSWORD}'
+      - 'GRAFANA_DATABASE_PASSWORD=${GRAFANA_DATABASE_PASSWORD}'
     ports:
       - '${PORT_GRAFANA:-3000}:3000'
     expose:

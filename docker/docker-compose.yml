@@ -15,7 +15,7 @@ services:
       - 'DATABASE_TYPE=${DATABASE_TYPE:-mariadb}'
       - 'DATABASE_URL=${DATABASE_URL:-jdbc:mariadb://database/bluerange?useServerPrepStmts=true}'
       - 'DATABASE_USER=${DATABASE_USER:-bluerange}'
-      - 'DATABASE_PWD=${BLUERANGE_DB_PASSWORD:-bluerange-database-pwd-change-me}'
+      - 'DATABASE_PWD=${BLUERANGE_DATABASE_PASSWORD:-bluerange-database-pwd-change-me}'
       - 'RELUTION_MONGODB_ENABLED=true'
       - 'MONGO_DATABASE=bluerange'
       - 'MONGO_HOST=mongodb'
@@ -61,11 +61,11 @@ services:
     command: /scripts/setMariaDBPermsAndStartEntryPoint.sh
     restart: unless-stopped
     environment:
-      - 'MYSQL_PASSWORD=${BLUERANGE_DB_PASSWORD:-bluerange-database-pwd-change-me}'
+      - 'MYSQL_PASSWORD=${BLUERANGE_DATABASE_PASSWORD:-bluerange-database-pwd-change-me}'
       - 'MYSQL_USER=bluerange'
       - 'MYSQL_DATABASE=bluerange'
       - 'MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PWD:-root-database-pwd-change-me}'
-      - 'GRAFANA_DB_PASSWORD=${GRAFANA_DB_PASSWORD}'
+      - 'GRAFANA_DATABASE_PASSWORD=${GRAFANA_DATABASE_PASSWORD}'
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
       interval: 30s

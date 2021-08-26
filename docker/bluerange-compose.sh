@@ -11,8 +11,8 @@ fi
 
 # due to compatibility reasons (use former BlueRange DB password variable 'DATABASE_PWD' if set)
 if [ ! -z "$DATABASE_PWD" ] ; then
-  export BLUERANGE_DB_PASSWORD=${DATABASE_PWD}
-  echo "Note: Deprecated env variable 'DATABASE_PWD' is set. Use 'BLUERANGE_DB_PASSWORD' env variable instead !!"
+  export BLUERANGE_DATABASE_PASSWORD=${DATABASE_PWD}
+  echo "Note: Deprecated env variable 'DATABASE_PWD' is set. Use 'BLUERANGE_DATABASE_PASSWORD' env variable instead !!"
 fi
 
 set +a
