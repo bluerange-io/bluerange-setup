@@ -32,7 +32,7 @@ export BLUERANGE_COMPOSE_SH=1
 mkdir -p anchors
 if [ $# -eq 0 ] ; then
   # HTTPS setup using self-signed certificates
-  if [ ! -f ./server.key ] ; then
+  if [ ! -f ./server.key ] && [ ! -L ./server.key ] ; then
     if [ ! -f ./ca.pem ] ; then
       # initialize CA
       echo "$" openssl genrsa -out ca.key 2048
