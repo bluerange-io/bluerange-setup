@@ -205,8 +205,8 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "(iot.bluerange.io) Sending one message failed or took longer than it should take",
-        "name": "[iot] MQTT Send message test",
+        "message": "Sending one message failed or took longer than it should take",
+        "name": "MQTT Send message test",
         "noDataState": "no_data",
         "notifications": []
       },
