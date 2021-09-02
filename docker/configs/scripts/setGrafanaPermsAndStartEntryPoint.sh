@@ -19,4 +19,4 @@ export GF_PATHS_CONFIG=${CONFIG_FILE_RESOLVED}
 
 # run grafana (Dockerfile) entrypoint
 # ENTRYPOINT [ "/run.sh" ]
-exec /run.sh
+exec /bin/su -s /bin/bash -c '/run.sh' grafana

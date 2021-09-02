@@ -30,6 +30,7 @@ services:
 
   grafana:
     entrypoint: ["/bin/bash"]
+    user: root
     command: /scripts/setGrafanaPermsAndStartEntryPoint.sh
     restart: unless-stopped
     environment:
