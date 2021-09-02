@@ -355,8 +355,8 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "(iot.bluerange.io) Opening/Closing a connection failed or took longer than it should take",
-        "name": "[iot] MQTT Connection timeout",
+        "message": "Opening/Closing a connection failed or took longer than it should take",
+        "name": "MQTT Connection timeout",
         "noDataState": "no_data",
         "notifications": [
           {
