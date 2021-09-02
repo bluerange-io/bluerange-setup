@@ -514,8 +514,8 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "(iot.bluerange.io) Subscribing/Unsubscribing on a topic failed or took longer than it should take",
-        "name": "[iot] MQTT Subscribe Topic",
+        "message": "Subscribing/Unsubscribing on a topic failed or took longer than it should take",
+        "name": "MQTT Subscribe Topic",
         "noDataState": "no_data",
         "notifications": [
           {
