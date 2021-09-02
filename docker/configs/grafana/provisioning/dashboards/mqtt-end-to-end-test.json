@@ -57,8 +57,8 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "(iot.bluerange.io) Sending multiple messages in parallel failed or took longer than it should take",
-        "name": "[iot] MQTT Send multiple messages test",
+        "message": "Sending multiple messages in parallel failed or took longer than it should take",
+        "name": "MQTT Send multiple messages test",
         "noDataState": "no_data",
         "notifications": []
       },
