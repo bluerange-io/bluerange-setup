@@ -56,8 +56,8 @@
         "for": "1m",
         "frequency": "1m",
         "handler": 1,
-        "message": "(beta.bluerange.io) Server unhealthy",
-        "name": "[beta] Server Health",
+        "message": "Server unhealthy",
+        "name": "Server Health",
         "noDataState": "no_data",
         "notifications": []
       },
