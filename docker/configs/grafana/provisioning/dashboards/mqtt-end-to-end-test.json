@@ -416,7 +416,7 @@
           "refId": "A"
         },
         {
-          "expr": "mqtt_close_connection_seconds{instance=\"mqtt-monitoring.bluerange.io:443\"}",
+          "expr": "mqtt_close_connection_seconds{}",
           "instant": false,
           "legendFormat": "Close connection",
           "refId": "B"
@@ -575,7 +575,7 @@
           "refId": "A"
         },
         {
-          "expr": "mqtt_unsubscribe_topic_seconds{instance=\"mqtt-monitoring.bluerange.io:443\"}",
+          "expr": "mqtt_unsubscribe_topic_seconds{}",
           "legendFormat": "Unsubscribe topic",
           "refId": "B"
         }
