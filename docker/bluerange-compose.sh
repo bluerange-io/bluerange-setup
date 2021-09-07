@@ -9,6 +9,13 @@ if [ -f ./server.env ] ; then
   export HOST
 fi
 
+if [ ! -f ./application.yml ] ; then
+  cat > application.yml << EOF
+# advanced configuration goes here, e.g. LDAP
+
+EOF
+fi
+
 # due to compatibility reasons (use former BlueRange DB password variable 'DATABASE_PWD' if set)
 if [ ! -z "$DATABASE_PWD" ] ; then
   export BLUERANGE_DATABASE_PASSWORD=${DATABASE_PWD}

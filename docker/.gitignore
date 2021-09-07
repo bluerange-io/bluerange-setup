@@ -1,4 +1,5 @@
 /anchors/*
+/application.yml
 /ca.*
 /cert.*
 /docker-compose.override.yml

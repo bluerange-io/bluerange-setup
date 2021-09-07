@@ -46,6 +46,7 @@ services:
     volumes:
       # mount folder of trusted CAs
       - './anchors:/etc/pki/ca-trust/source/anchors:ro'
+      - './application.yml:/opt/relution/application.yml:ro'
     links:
       - 'database'
       - 'mongodb'
