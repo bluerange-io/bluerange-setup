@@ -31,6 +31,7 @@ popd
 # server configuration
 echo "$ tar -cvf backup/bluerange-${NOW}/server.tar server.* ca.* cert.* serial* newcerts/*"
 tar -cvf backup/bluerange-${NOW}/server.tar \
+    application.yml \
     server.* \
     ca.* \
     cert.* \
@@ -46,3 +47,4 @@ popd
 echo "$ chmod go-r backup/bluerange-${NOW}.tar.gz"
 chmod go-r backup/bluerange-${NOW}.tar.gz
 echo "* backup/bluerange-${NOW}.tar.gz"
+
