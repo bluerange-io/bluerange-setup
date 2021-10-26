@@ -30,7 +30,7 @@ if [ -z "$HOST" ] ; then
   exit 1
 fi
 
-DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml -f docker-compose.prometheus.yml"
+DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml -f docker-compose.monitoring.yml"
 if [ -f "docker-compose.override.yml" ]; then
  DOCKER_COMPOSE="$DOCKER_COMPOSE -f docker-compose.override.yml"
 fi
