@@ -223,6 +223,7 @@ EOF
   echo "      Grafana: https://${HOST}:${PORT_GRAFANA:-3000} (admin / ${SYSTEM_ADMIN_PASSWORD})"
   echo "       Kibana: https://${HOST}:${PORT_KIBANA:-5601} (admin / admin)"
   echo "        Minio: https://${HOST}:${PORT_MINIO:-9000} (${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY})"
+  echo "     Graphite: http://${HOST}:${PORT_GRAPHITE_9780:-9780}"
   echo "   Prometheus: http://${HOST}:${PORT_PROMETHEUS:-9090}"
   echo "ElasticSearch: https://${HOST}:${PORT_ELASTICSEARCH:-9200} (admin / admin)"
   exit 0
