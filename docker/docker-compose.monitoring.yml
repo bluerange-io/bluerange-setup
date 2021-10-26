@@ -20,7 +20,7 @@ services:
     image: prom/prometheus:${DOCKER_PROMETHEUS:-v2.12.0}
     volumes:
       - ./configs/scripts/setPrometheusPermsAndStartEntryPoint.sh:/scripts/setPrometheusPermsAndStartEntryPoint.sh:ro
-      - './configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+      - './configs/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
       - 'prometheus:/prometheus:rw'
     links:
      - 'bluerange'
@@ -43,14 +43,25 @@ services:
     image: grafana/grafana:${DOCKER_GRAFANA:-8.1.1}
     volumes:
       - ./configs/scripts/setGrafanaPermsAndStartEntryPoint.sh:/scripts/setGrafanaPermsAndStartEntryPoint.sh:ro
-      - ./configs/grafana/grafana.ini:/home/grafana/grafana.ini.template:ro
-      - ./configs/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./configs/monitoring/grafana/grafana.ini:/home/grafana/grafana.ini.template:ro
+      - ./configs/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./fullchain.pem:/home/grafana/server.pem.copy:ro
       - ./server.key:/home/grafana/server.key.copy:ro
       - grafana:/var/lib/grafana:rw
     links:
       - 'prometheus'
+      - 'graphite'
       - 'database'
+
+  graphite:
+    restart: unless-stopped
+    ports:
+      - 2003-2004:2003-2004
+      - 2023-2024:2023-2024
+      - '${PORT_GRAPHITE:-8125}:8125/udp'
+    expose:
+      - '8125'
+    image: graphiteapp/graphite-statsd:${DOCKER_GRAPHITE:-1.1.8-1}
 
 volumes:
   prometheus:
