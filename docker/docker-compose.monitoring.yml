@@ -56,11 +56,13 @@ services:
   graphite:
     restart: unless-stopped
     ports:
-      - 2003-2004:2003-2004
-      - 2023-2024:2023-2024
-      - '${PORT_GRAPHITE:-8125}:8125/udp'
-    expose:
-      - '8125'
+      - '${PORT_GRAPHITE:-2004}:2004'
+      - '${PORT_GRAPHITE_2003:-2003}:2003'
+      - '${PORT_GRAPHITE_2023:-2023}:2023'
+      - '${PORT_GRAPHITE_2024:-2024}:2024'
+      - '${PORT_GRAPHITE_8125:-8125}:8125/udp'
+      - '${PORT_GRAPHITE_8126:-8126}:8126'
+      - '${PORT_GRAPHITE_9780:-9780}:80'
     image: graphiteapp/graphite-statsd:${DOCKER_GRAPHITE:-1.1.8-1}
 
 volumes:
