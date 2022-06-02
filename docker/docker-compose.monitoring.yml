@@ -59,6 +59,9 @@ services:
       - '${PORT_GRAPHITE:-2004}:2004'
       - '${PORT_GRAPHITE_9780:-9780}:80'
     image: graphiteapp/graphite-statsd:${DOCKER_GRAPHITE:-1.1.8-1}
+    volumes:
+      - ./configs/monitoring/graphite/storage-schemas.conf:/opt/graphite/conf/storage-schemas.conf:ro
+      - ./configs/monitoring/graphite/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf:ro
 
 volumes:
   prometheus:
