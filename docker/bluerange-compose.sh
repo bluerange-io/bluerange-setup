@@ -30,7 +30,15 @@ if [ -z "$HOST" ] ; then
   exit 1
 fi
 
-DOCKER_COMPOSE="docker-compose -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml -f docker-compose.monitoring.yml"
+if docker compose version >/dev/null 2>&1 ; then
+  DOCKER_COMPOSE="docker compose"
+elif docker-compose version >/dev/null 2>&1 ; then
+  DOCKER_COMPOSE="docker-compose"
+else
+  echo "docker compose not present!" >&2
+  exit 1
+fi
+DOCKER_COMPOSE="$DOCKER_COMPOSE -p ${COMPOSE_PROJECT_NAME} -f docker-compose.yml -f docker-compose.elasticsearch.yml -f docker-compose.mender.yml -f docker-compose.monitoring.yml"
 if [ -f "docker-compose.override.yml" ]; then
  DOCKER_COMPOSE="$DOCKER_COMPOSE -f docker-compose.override.yml"
 fi
