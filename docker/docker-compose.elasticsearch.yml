@@ -18,10 +18,10 @@ services:
       - '9600'
     image: amazon/opendistro-for-elasticsearch:${DOCKER_ELASTICSEARCH:-1.1.0}
     volumes:
-      - ./configs/scripts/setElasticSearchPermsAndStartEntryPoint.sh:/scripts/setElasticSearchPermsAndStartEntryPoint.sh:ro
+      - './configs/scripts/setElasticSearchPermsAndStartEntryPoint.sh:/scripts/setElasticSearchPermsAndStartEntryPoint.sh:ro'
       - './configs/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro'
-      - './fullchain.pem:/usr/share/elasticsearch/config/server.pem.copy:ro'
-      - './server.key:/usr/share/elasticsearch/config/server.key.copy:ro'
+      - './certs/fullchain.pem:/usr/share/elasticsearch/config/server.pem:ro'
+      - './certs/server.key:/usr/share/elasticsearch/config/server.key:ro'
       - 'elasticsearch:/usr/share/elasticsearch/data:rw'
     logging:
       driver: 'json-file'
@@ -49,8 +49,8 @@ services:
       - '5601'
     image: amazon/opendistro-for-elasticsearch-kibana:${DOCKER_KIBANA:-1.1.0}
     volumes:
-      - './fullchain.pem:/usr/share/kibana/config/server.pem:ro'
-      - './server.key:/usr/share/kibana/config/server.key:ro'
+      - './certs/fullchain.pem:/usr/share/kibana/config/server.pem:ro'
+      - './certs/server.key:/usr/share/kibana/config/server.key:ro'
     links:
       - 'elasticsearch'
     logging:

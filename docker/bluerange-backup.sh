@@ -29,14 +29,11 @@ rm -rf mongodb
 popd
 
 # server configuration
-echo "$ tar -cvf backup/bluerange-${NOW}/server.tar server.* ca.* cert.* serial* newcerts/*"
+echo "$ tar -cvf backup/bluerange-${NOW}/server.tar application.yml server.* certs/*"
 tar -cvf backup/bluerange-${NOW}/server.tar \
     application.yml \
     server.* \
-    ca.* \
-    cert.* \
-    serial* \
-    newcerts/*
+    certs/*
 
 # tar it all up
 echo "$ cd backup && tar -gzip -cvf bluerange-${NOW}.tar.gz bluerange-${NOW}"
