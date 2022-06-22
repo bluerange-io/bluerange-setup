@@ -50,12 +50,12 @@ if [ $# -eq 0 ] ; then
   if [ ! -e certs/server.key ] && [ -e ./server.key ] ; then
     mv -v \
        anchors \
-       ca.conf ca.crt ca.key \
+       ca.conf ca.crt ca.key ca.pem \
        cert.conf cert.crt cert.csr cert.key cert.pem \
        fullchain.pem \
-       index.txt index.txt.attr \
+       index.txt index.txt.attr index.txt.old \
        newcerts \
-       serial \
+       serial serial.old \
        server.key server.pem server.rsa \
        certs/
   fi
