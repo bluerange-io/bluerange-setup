@@ -65,7 +65,7 @@ if [ $# -eq 0 ] ; then
   # use well-defined executables embedded in server image,
   # to use host instead set AWK=awk and OPENSSL=openssl...
   AWK="docker run -i --rm cmd.cat/awk:${DOCKER_CMD_AWK:-latest} awk"
-  OPENSSL="docker run -ti --rm --volume ${PWD}:/work:rw --workdir /work cmd.cat/openssl:${DOCKER_OPENSSL:-latest} openssl"
+  OPENSSL="docker run -ti --rm --volume ${PWD}:/work:rw --workdir /work cmd.cat/openssl:${DOCKER_CMD_OPENSSL:-latest} openssl"
 
   # HTTPS setup using self-signed certificates
   if [ ! -f ./server.key ] && [ ! -L ./server.key ] ; then
