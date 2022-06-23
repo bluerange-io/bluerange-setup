@@ -62,25 +62,30 @@ if [ $# -eq 0 ] ; then
 
   pushd certs
 
+  # use well-defined executables embedded in server image,
+  # to use host instead set AWK=awk and OPENSSL=openssl...
+  AWK="docker run -i --rm cmd.cat/awk:${DOCKER_CMD_AWK:-latest} awk"
+  OPENSSL="docker run -ti --rm --volume ${PWD}:/work:rw --workdir /work cmd.cat/openssl:${DOCKER_CMD_OPENSSL:-latest} openssl"
+
   # HTTPS setup using self-signed certificates
   if [ ! -f ./server.key ] && [ ! -L ./server.key ] ; then
     if [ ! -f ./ca.pem ] ; then
       # initialize CA
       echo "$" openssl genrsa -out ca.key 2048
-      openssl genrsa -out ca.key 2048
+      $OPENSSL genrsa -out ca.key 2048
       echo "$" openssl req -new -x509 -key ca.key -out ca.crt
-      openssl req -new -x509 -key ca.key -out ca.crt -days 10950
+      $OPENSSL req -new -x509 -key ca.key -out ca.crt -days 10950
       echo "$" openssl x509 -in ca.crt -out ca.pem
-      openssl x509 -in ca.crt -out ca.pem
+      $OPENSSL x509 -in ca.crt -out ca.pem
     fi
 
     # create CSR
     if [ ! -f cert.csr ] ; then
-      export CA_SUBJECT_LINE="$(openssl x509 -in ca.crt -noout -subject -nameopt compat)"
-      eval $(echo $CA_SUBJECT_LINE | awk -F '/' '{ for (i=2; i<=NF; i++) { p=index($i,"=");print "export CA_SUBJECT_LINE__"substr($i,1,p)"\""substr($i,p+1)"\"" } }')
+      export CA_SUBJECT_LINE="$($OPENSSL x509 -in ca.crt -noout -subject -nameopt compat)"
+      eval $(echo $CA_SUBJECT_LINE | $AWK -F '/' '{ for (i=2; i<=NF; i++) { p=index($i,"=");print "export CA_SUBJECT_LINE__"substr($i,1,p)"\""substr($i,p+1)"\"" } }')
       export HOST__DNS=host.that.does.not.match
       export HOST__IP=240.0.0.0 # see <https://superuser.com/questions/698244/ip-address-that-is-the-equivalent-of-dev-null>
-      eval $(echo $HOST | awk '{ print "export HOST__"(($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/)?"IP":"DNS")"="$0 }')
+      eval $(echo $HOST | $AWK '{ print "export HOST__"(($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/)?"IP":"DNS")"="$0 }')
       cat > cert.conf << EOF
 # see https://gist.github.com/Soarez/9688998
 # and https://www.thomas-krenn.com/de/wiki/Openssl_Multi-Domain_CSR_erstellen
@@ -149,10 +154,10 @@ DNS.3 = mosquitto
 IP.1 = $HOST__IP
 EOF
       echo "$" openssl req -new -out cert.csr -config cert.conf
-      openssl req -new -out cert.csr -config cert.conf
+      $OPENSSL req -new -out cert.csr -config cert.conf
     else
       echo "$" openssl x509 -in cert.crt -signkey cert.key -x509toreq -out cert.csr
-      openssl x509 -in cert.crt -signkey cert.key -x509toreq -out cert.csr
+      $OPENSSL x509 -in cert.crt -signkey cert.key -x509toreq -out cert.csr
     fi
 
     # sign CSR, export and verify PE
@@ -208,11 +213,11 @@ EOF
     if [ ! -f serial ] ; then echo '01' > serial; fi
     SERIAL=$(cat serial)
     echo "$" openssl ca -config ca.conf -extfile cert.conf -out cert.crt -infiles cert.csr
-    openssl ca -config ca.conf -extfile cert.conf -out cert.crt -infiles cert.csr
+    $OPENSSL ca -config ca.conf -extfile cert.conf -out cert.crt -infiles cert.csr
     echo "$" openssl x509 -in newcerts/${SERIAL}.pem -out cert.pem
-    openssl x509 -in newcerts/${SERIAL}.pem -out cert.pem
+    $OPENSSL x509 -in newcerts/${SERIAL}.pem -out cert.pem
     echo "$" openssl verify -CAfile ca.crt cert.crt
-    openssl verify -CAfile ca.crt cert.crt
+    $OPENSSL verify -CAfile ca.crt cert.crt
 
     # resulting PEMs
     rm -df fullchain.pem
@@ -229,7 +234,7 @@ EOF
   fi
   if [ ! -f server.rsa ] ; then
     echo "$" openssl rsa -inform PEM -in server.key -out server.rsa
-    openssl rsa -inform PEM -in server.key -out server.rsa
+    $OPENSSL rsa -inform PEM -in server.key -out server.rsa
   fi
 
   popd
