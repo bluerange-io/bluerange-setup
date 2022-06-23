@@ -20,8 +20,8 @@ services:
     volumes:
       - './configs/scripts/setElasticSearchPermsAndStartEntryPoint.sh:/scripts/setElasticSearchPermsAndStartEntryPoint.sh:ro'
       - './configs/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro'
-      - './certs/fullchain.pem:/usr/share/elasticsearch/config/server.pem:ro'
-      - './certs/server.key:/usr/share/elasticsearch/config/server.key:ro'
+      - './certs/fullchain.pem:/usr/share/elasticsearch/config/server.pem.copy:ro'
+      - './certs/server.key:/usr/share/elasticsearch/config/server.key.copy:ro'
       - 'elasticsearch:/usr/share/elasticsearch/data:rw'
     logging:
       driver: 'json-file'
