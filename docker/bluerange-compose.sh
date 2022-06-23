@@ -44,8 +44,24 @@ if [ -f "docker-compose.override.yml" ]; then
 fi
 export BLUERANGE_COMPOSE_SH=1
 
-mkdir -p anchors
+mkdir -p certs/anchors
 if [ $# -eq 0 ] ; then
+  # maybe move self-signed files to certs folder
+  if [ ! -e certs/server.key ] && [ -e ./server.key ] ; then
+    mv -v \
+       anchors \
+       ca.conf ca.crt ca.key ca.pem \
+       cert.conf cert.crt cert.csr cert.key cert.pem \
+       fullchain.pem \
+       index.txt index.txt.attr index.txt.old \
+       newcerts \
+       serial serial.old \
+       server.key server.pem server.rsa \
+       certs/
+  fi
+
+  pushd certs
+
   # HTTPS setup using self-signed certificates
   if [ ! -f ./server.key ] && [ ! -L ./server.key ] ; then
     if [ ! -f ./ca.pem ] ; then
@@ -215,6 +231,8 @@ EOF
     echo "$" openssl rsa -inform PEM -in server.key -out server.rsa
     openssl rsa -inform PEM -in server.key -out server.rsa
   fi
+
+  popd
 
   echo "->" $DOCKER_COMPOSE up -d
   $DOCKER_COMPOSE up -d

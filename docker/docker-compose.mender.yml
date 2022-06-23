@@ -7,9 +7,9 @@ services:
     ports:
       - '${PORT_REDIS:-6379}:6379'
     volumes:
-      - redis:/var/lib/redis:rw
-      - ./conductor/redis/redis.conf:/etc/redis/redis.conf:ro
-      - ./conductor/redis/entrypoint.sh:/redis/entrypoint.sh:ro
+      - 'redis:/var/lib/redis:rw'
+      - './conductor/redis/redis.conf:/etc/redis/redis.conf:ro'
+      - './conductor/redis/entrypoint.sh:/redis/entrypoint.sh:ro'
     entrypoint: /redis/entrypoint.sh
     logging:
       driver: 'json-file'
@@ -42,7 +42,7 @@ services:
       - 'MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minio-secret-change-me}'
     image: minio/minio:${DOCKER_MINIO:-RELEASE.2018-09-25T21-34-43Z}
     volumes:
-      - mender-artifacts:/export:rw
+      - 'mender-artifacts:/export:rw'
     command: server /export
     logging:
       driver: 'json-file'
@@ -62,9 +62,10 @@ services:
       - 'DOWNLOAD_SPEED=5m'
       - 'MAX_CONNECTIONS=50'
     volumes:
-      - ./storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
-      - ./fullchain.pem:/var/www/storage-proxy/cert/cert.crt:ro
-      - ./server.key:/var/www/storage-proxy/cert/private.key:ro
+      - './storage-proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro'
+      - './fullchain.pem:/var/www/storage-proxy/cert/cert.crt:ro'
+      - './certs/fullchain.pem:/var/www/storage-proxy/cert/cert.crt:ro'
+      - './certs/server.key:/var/www/storage-proxy/cert/private.key:ro'
     logging:
       driver: 'json-file'
       options:
@@ -94,7 +95,7 @@ services:
       - 'storage-proxy:${HOST}'
     command: server
     volumes:
-      - ./ca.pem:/etc/ssl/certs/storage-proxy.crt:ro
+      - './certs/ca.pem:/etc/ssl/certs/storage-proxy.crt:ro'
     logging:
       driver: 'json-file'
       options:
@@ -129,9 +130,9 @@ services:
     ports:
       - '${PORT_MENDER:-444}:443'
     volumes:
-      - ./fullchain.pem:/var/www/mendersoftware/cert/cert.crt:ro
-      - ./server.key:/var/www/mendersoftware/cert/private.key:ro
-      - ./entrypoint-no-http2.sh:/entrypoint-no-http2.sh
+      - './certs/fullchain.pem:/var/www/mendersoftware/cert/cert.crt:ro'
+      - './certs/server.key:/var/www/mendersoftware/cert/private.key:ro'
+      - './entrypoint-no-http2.sh:/entrypoint-no-http2.sh'
     entrypoint: ["/entrypoint-no-http2.sh"]
     logging:
       driver: 'json-file'
@@ -150,7 +151,7 @@ services:
       - 'mongodb:mongo-device-auth'
     command: server --automigrate
     volumes:
-      - ./server.rsa:/etc/deviceauth/rsa/private.pem:ro
+      - './certs/server.rsa:/etc/deviceauth/rsa/private.pem:ro'
     logging:
       driver: 'json-file'
       options:
@@ -184,7 +185,7 @@ services:
       - 'mongodb:mongo-useradm'
     command: server --automigrate
     volumes:
-      - ./server.rsa:/etc/useradm/rsa/private.pem:ro
+      - './certs/server.rsa:/etc/useradm/rsa/private.pem:ro'
     logging:
       driver: 'json-file'
       options:

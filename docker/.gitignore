@@ -1,11 +1,5 @@
-/anchors/*
 /application.yml
-/ca.*
-/cert.*
+/certs
 /docker-compose.override.yml
-/fullchain.pem
-/index.*
-/newcerts/*
-/serial*
 /server.*
 /.DS_Store

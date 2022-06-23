@@ -45,7 +45,7 @@ services:
     image: bluerange/bluerange:${DOCKER_BLUERANGE:-latest}
     volumes:
       # mount folder of trusted CAs
-      - './anchors:/etc/pki/ca-trust/source/anchors:ro'
+      - './certs/anchors:/etc/pki/ca-trust/source/anchors:ro'
       - './application.yml:/opt/relution/application.yml:ro'
     links:
       - 'database'
@@ -78,7 +78,7 @@ services:
       - '3306'
     image: mariadb:${DOCKER_MARIADB:-latest}
     volumes:
-      - ./configs/scripts/setMariaDBPermsAndStartEntryPoint.sh:/scripts/setMariaDBPermsAndStartEntryPoint.sh:ro
+      - './configs/scripts/setMariaDBPermsAndStartEntryPoint.sh:/scripts/setMariaDBPermsAndStartEntryPoint.sh:ro'
       - './configs/database/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql.template:ro'
       - './configs/database/database.cnf:/etc/mysql/conf.d/database.cnf:ro'
       - 'mysql:/var/lib/mysql:rw'
@@ -123,8 +123,8 @@ services:
     volumes:
       - './configs/nginx.conf:/etc/nginx/nginx.conf:ro'
       - './configs/mime.types:/etc/nginx/mime.types:ro'
-      - './server.key:/etc/nginx/server.key:ro'
-      - './fullchain.pem:/etc/nginx/server.pem:ro'
+      - './certs/server.key:/etc/nginx/server.key:ro'
+      - './certs/fullchain.pem:/etc/nginx/server.pem:ro'
       - './htpasswd:/etc/nginx/htpasswd:ro'
     links: 
       - 'bluerange'
@@ -153,8 +153,8 @@ services:
     image: relution/relution-mosquitto:${DOCKER_MOSQUITTO:-latest}
     volumes:
       #- './mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro'
-      - './server.key:/etc/mosquitto/server.key:ro'
-      - './fullchain.pem:/etc/mosquitto/server.pem:ro'
+      - './certs/server.key:/etc/mosquitto/server.key:ro'
+      - './certs/fullchain.pem:/etc/mosquitto/server.pem:ro'
     links:
       - bluerange
     ulimits:
