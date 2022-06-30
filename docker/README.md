@@ -91,6 +91,14 @@ $ ./bluerange-compose.sh down
 
 Further customization should be done using the `docker-compose.override.yml` mechanism, see <https://docs.docker.com/compose/extends/>.
 
+### Monitoring server
+
+The file [docker-compose.monitoring.yml](docker-compose.monitoring.yml) contains services supporting [Prometheus](https://prometheus.io/) monitoring and [Grafana](https://grafana.com/) visualization.
+
+> ℹ️ The optional Prometheus monitoring services are enabled by specifying `COMPOSE_PROFILES=monitoring` in `server.env`.
+
+Mesh gateway devices support pushing metrics to the [Graphite](https://graphiteapp.org/) service when installing a configuration policy via the platform.
+
 ### Logging server
 
 The file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains an ElasticSearch stack, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
