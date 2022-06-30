@@ -2,6 +2,8 @@ version: '2.1'
 services:
 
   mender-redis:
+    profiles:
+      - mender
     restart: unless-stopped
     image: redis:${DOCKER_REDIS:-3.2.11-alpine}
     ports:
@@ -19,6 +21,8 @@ services:
         compress: 'true'
 
   mender-conductor:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'CONFIG_PROP=config.properties'
@@ -36,6 +40,8 @@ services:
         compress: 'true'
 
   minio:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-mender-deployments}'
@@ -52,6 +58,8 @@ services:
         compress: 'true'
 
   storage-proxy:
+    profiles:
+      - mender
     restart: unless-stopped
     image: openresty/openresty:${DOCKER_OPENRESTY:-1.13.6.2-0-alpine}
     links:
@@ -74,6 +82,8 @@ services:
         compress: 'true'
 
   mender-deployments:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'DEPLOYMENTS_MONGO_USERNAME=bluerange'
@@ -104,6 +114,8 @@ services:
         compress: 'true'
 
   mender-gui:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'INTEGRATION_VERSION'
@@ -116,6 +128,8 @@ services:
         compress: 'true'
 
   mender-api-gateway:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
@@ -142,6 +156,8 @@ services:
         compress: 'true'
 
   mender-device-auth:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'DEVICEAUTH_MONGO_USERNAME=bluerange'
@@ -160,6 +176,8 @@ services:
         compress: 'true'
 
   mender-inventory:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'INVENTORY_MONGO_USERNAME=bluerange'
@@ -176,6 +194,8 @@ services:
         compress: 'true'
 
   mender-useradm:
+    profiles:
+      - mender
     restart: unless-stopped
     environment:
       - 'USERADM_MONGO_USERNAME=bluerange'
