@@ -142,11 +142,13 @@ Start by creating a Site, enrolling a Mesh Gateway and positioning some Beacons.
 
 ## Node RED and MQTT
 
+> ℹ️ The optional Node RED service is enabled by specifying `COMPOSE_PROFILES=nodered` in `server.env`.
+
 The Node RED instance can be accessed through nginx at <https://my-machine.my-domain.me/nodered> specifying username `iot` and password `mway1234` as credentials. Additional users can be added using the command `htpasswd htpasswd ${username}`. On Cent OS 7 the tool can be installed using `yum install httpd-tools`. For further information see [Restricting Access with HTTP Basic Authentication](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/).
 
 **At the time of writing only the System/Organization Administrator accounts are allowed to send messages to MQTT.** Other users connecting to MQTT using access tokens are granted read-only access to their respective organization only. Any attempt violating security restrictions may cause immediate disconnection!
 
-### To get credentials for connecting to Node RED to the `mosquitto` broker...
+### To get credentials for connecting Node RED to the `mosquitto` broker...
 
 The values required for authentication are specific to each installation. It is not possible to write them down here, but this is how to obtain the information required:
 
