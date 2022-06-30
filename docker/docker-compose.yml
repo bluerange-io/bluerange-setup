@@ -129,7 +129,6 @@ services:
     links: 
       - 'bluerange'
       - 'mosquitto'
-      - 'nodered'
     logging:
       driver: 'json-file'
       options:
