@@ -13,6 +13,7 @@ MYSQL_ROOT_PASSWORD=$(./bluerange-compose.sh exec -T database printenv MYSQL_ROO
     --compress \
     --single-transaction \
     --all-databases \
+    --max_allowed_packet=1073741824 \
     >backup/bluerange-${NOW}/mariadb.sql
 
 # backup of mongodb
