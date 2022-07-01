@@ -77,6 +77,8 @@ mender-useradm$ useradm create-user --username=admin@my-machine.my-domain.me --p
 ElasticSearch: https://my-machine.my-domain.me:9201 (admin / admin)
 ```
 
+> ℹ️ The Mender, NodeRED, ElasticSearch logging and Prometheus monitoring services are optionally started depending on the [profiles](https://docs.docker.com/compose/profiles/) activated by setting `COMPOSE_PROFILES` in `server.env`.
+
 Notice, the [bluerange-compose.sh](bluerange-compose.sh) script can be used just like `docker-compose`:
 
 ```sh
@@ -89,15 +91,27 @@ $ ./bluerange-compose.sh down
 
 Further customization should be done using the `docker-compose.override.yml` mechanism, see <https://docs.docker.com/compose/extends/>.
 
+### Monitoring server
+
+The file [docker-compose.monitoring.yml](docker-compose.monitoring.yml) contains services supporting [Prometheus](https://prometheus.io/) monitoring and [Grafana](https://grafana.com/) visualization.
+
+> ℹ️ The optional Prometheus monitoring services are enabled by specifying `COMPOSE_PROFILES=monitoring` in `server.env`.
+
+Mesh gateway devices support pushing metrics to the [Graphite](https://graphiteapp.org/) service when installing a configuration policy via the platform.
+
 ### Logging server
 
 The file [docker-compose.elasticsearch.yml](docker-compose.elasticsearch.yml) contains an ElasticSearch stack, based on [Open Distro for Elasticsearch](https://opendistro.github.io/for-elasticsearch/).
+
+> ℹ️ The optional ElasticSearch logging services are enabled by specifying `COMPOSE_PROFILES=elasticsearch` in `server.env`.
 
 In order to let the mesh gateway devices know about the custom logging server, a configuration policy must be applied in the platform.
 
 ### Update server
 
 Likewise the file [docker-compose.mender.yml](docker-compose.mender.yml) contains the setup required to start a dedicated update server.
+
+> ℹ️ The optional Mender update services are enabled by specifying `COMPOSE_PROFILES=mender` in `server.env`.
 
 Once started the update server is available via HTTPS at port 444, i.e. <https://my-machine.my-domain.me:444>. In order to log into the server an initial user account is created by `bluerange-compose.sh` automatically. Additional users may be registered interactively in the Mender UI or like this:
 

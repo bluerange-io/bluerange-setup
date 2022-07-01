@@ -2,6 +2,8 @@ version: '3.9'
 services:
 
   prometheus:
+    profiles:
+      - monitoring
     entrypoint: ["/bin/sh"]
     command: /scripts/setPrometheusPermsAndStartEntryPoint.sh
     restart: unless-stopped
@@ -29,6 +31,8 @@ services:
 
 
   grafana:
+    profiles:
+      - monitoring
     entrypoint: ["/bin/bash"]
     user: root
     command: /scripts/setGrafanaPermsAndStartEntryPoint.sh
@@ -54,6 +58,8 @@ services:
       - 'database'
 
   graphite:
+    profiles:
+      - monitoring
     restart: unless-stopped
     ports:
       - '${PORT_GRAPHITE:-2004}:2004'
