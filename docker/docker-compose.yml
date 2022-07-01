@@ -129,7 +129,6 @@ services:
     links: 
       - 'bluerange'
       - 'mosquitto'
-      - 'nodered'
     logging:
       driver: 'json-file'
       options:
@@ -168,6 +167,8 @@ services:
         compress: 'true'
 
   nodered:
+    profiles:
+      - nodered
     restart: unless-stopped
     ports:
       - '${PORT_NODERED:-127.0.0.1:1880}:1880'
