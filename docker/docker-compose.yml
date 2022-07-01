@@ -47,6 +47,7 @@ services:
       # mount folder of trusted CAs
       - './certs/anchors:/etc/pki/ca-trust/source/anchors:ro'
       - './application.yml:/opt/relution/application.yml:ro'
+      - './templates:/opt/relution/templates:ro'
     links:
       - 'database'
       - 'mongodb'
