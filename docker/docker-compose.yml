@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.9'
 services:
 
   bluerange:
@@ -24,7 +24,7 @@ services:
       - 'MONGO_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
       - 'MONGO_AUTHENTICATION_DATABASE=admin'
       - 'MQTT_ENABLED=true'
-      - 'MQTT_SERVER_URIS=ssl://$${HOST}:${PORT_MOSQUITTO_MQTTS:-8883},wss://$${HOST}:${PORT_MOSQUITTO_WSS:-9001}'
+      - 'MQTT_SERVER_URIS=ssl://$${HOST}:${PORT_MOSQUITTO_MQTTS:-8883},wss://$${HOST}:${PORT_MOSQUITTO_WSS_PUBLIC:-443}'
       - 'ORGA_NAME=iot'
       - 'ORGA_FULLNAME=IOT'
       - 'ORGA_ADMIN_USERNAME=admin'
