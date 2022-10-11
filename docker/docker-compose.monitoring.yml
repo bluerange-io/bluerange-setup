@@ -28,6 +28,12 @@ services:
      - 'bluerange'
      - 'kibana'
      - 'mosquitto'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_PROMETHEUS_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
 
   grafana:
@@ -56,6 +62,12 @@ services:
       - 'prometheus'
       - 'graphite'
       - 'database'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_GRAFANA_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
   graphite:
     profiles:
@@ -68,6 +80,12 @@ services:
     volumes:
       - ./configs/monitoring/graphite/storage-schemas.conf:/opt/graphite/conf/storage-schemas.conf:ro
       - ./configs/monitoring/graphite/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf:ro
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_GRAPHITE_LOGSIZE:-8m}'
+        max-file: '4'
+        compress: 'true'
 
 volumes:
   prometheus:
