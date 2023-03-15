@@ -68,6 +68,7 @@ services:
       - 'MYSQL_DATABASE=bluerange'
       - 'MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PWD:-root-database-pwd-change-me}'
       - 'GRAFANA_DATABASE_PASSWORD=${GRAFANA_DATABASE_PASSWORD}'
+      - 'MARIADB_AUTO_UPGRADE=1'
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
       interval: 30s
