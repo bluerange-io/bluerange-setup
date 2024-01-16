@@ -1,0 +1,19 @@
+{
+    "organizationUuid":"",
+    "rootLogLevel": "INFO",
+    "logLevels": {
+    },
+    "dryRun":false,
+    "rest": {
+        "baseUrl": "https://bluerange",
+        "userAccessTokenAuth": ""
+    },
+    "mqtt": {
+        "host":"bluerange",
+        "path":"/ws",
+        "protocol":"wss",
+        "port":443,
+        "username":"admin",
+        "password": ""
+    }
+}

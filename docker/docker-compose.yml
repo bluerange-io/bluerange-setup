@@ -168,6 +168,27 @@ services:
         max-file: '4'
         compress: 'true'
 
+  automate:
+    profiles:
+      - automate
+    restart: unless-stopped
+    depends_on:
+      bluerange:
+        condition: service_healthy
+    ports:
+      - '${PORT_AUTOMATE:-127.0.0.1:9123}:9123'
+    expose:
+      - '9123'
+    image: harbor.mway.io/bluerange/bluerange-automate:latest
+    volumes:
+      - './configs/automate.json:/opt/config/default.json'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_AUTOMATE_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
+
   nodered:
     profiles:
       - nodered
