@@ -1,0 +1,17 @@
+version: '3'
+services:
+  certbot:
+    image: certbot/dns-route53
+    volumes:
+      - "./letsencrypt-config:/etc/letsencrypt"
+      - "./letsencrypt:/var/lib/letsencrypt"
+    command:
+      - certonly
+      - --dns-route53
+      - -d <DOMAIN>
+      - -m admin@bluerange.io
+      - --agree-tos
+    environment:
+      AWS_ACCESS_KEY_ID: <KEY>
+      AWS_SECRET_ACCESS_KEY: <SECRET>
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
