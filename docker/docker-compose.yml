@@ -151,7 +151,7 @@ services:
       - '1883'
       - '8883'
       - '9001'
-    image: relution/relution-mosquitto:${DOCKER_MOSQUITTO:-latest}
+    image: bluerange/bluerange-mosquitto:${DOCKER_MOSQUITTO:-latest}
     volumes:
       #- './mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro'
       - './certs/server.key:/etc/mosquitto/server.key:ro'
