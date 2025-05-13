@@ -1,0 +1,5 @@
+[mysqld]
+collation_server=utf8mb4_general_ci
+character_set_server=utf8mb4
+max_allowed_packet=1G
+innodb_file_per_table=1
