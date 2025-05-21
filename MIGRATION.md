@@ -1,7 +1,8 @@
 # Migration from MariaDB to PostgreSQL using pgloader
 
 Change the compose profiles to include just the databases and the server, to keep the databases in a clean state.
-```
+
+```shell
 # add this to the server.env
 COMPOSE_PROFILES=server,postgresql,mariadb
 ```
@@ -16,9 +17,9 @@ Ensure you created a backup of the database using the `bluerange-backup.sh`.
 1. Start the Server once, to let it create the database schema
 1. Stop the Server again before proceeding with the migration
 
-
 ## pgloader script
-```
+
+```sql
 LOAD DATABASE
     FROM mysql://bluerange:<pw>@database/bluerange
     INTO postgresql://bluerange:<pw>@postgresql/bluerange
@@ -34,7 +35,7 @@ LOAD DATABASE
 ;
 ```
 
-```
+```shell
 # start pgloader docker container
 docker run --network bluerange_default -it dimitri/pgloader:latest bash
 
