@@ -1,0 +1,266 @@
+services:
+
+  traefik:
+    profiles:
+      - traefik
+    restart: unless-stopped
+    env_file:
+      - './server.env'
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+    healthcheck:
+      test: ["CMD", "wget", "-O", "/dev/null", "http://localhost:8080/ping"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    image: traefik
+    command:
+      - --log.level=INFO
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --ping=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.watch=true
+      - --entryPoints.web.address=:80
+      - --entryPoints.web.http.redirections.entryPoint.to=websecure
+      - --entryPoints.web.http.redirections.entryPoint.scheme=https
+      - --entryPoints.websecure.address=:443
+      - --entryPoints.mqtts.address=:8883
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,9.9.9.9:53
+    ports:
+      - '${PORT_TRAEFIK_HTTP:-80}:80'
+      - '${PORT_TRAEFIK_HTTPS:-443}:443'
+      - '${PORT_TRAEFIK_MQTTS:-8883}:8883'
+      - '${PORT_TRAEFIK_TRAEFIK:-127.0.0.1:8080}:8080'
+    volumes:
+      - ./certs/letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_TRAEFIK_LOGSIZE:-64m}'
+        max-file: '4'
+        compress: 'true'
+
+  bluerange:
+    profiles:
+      - server
+    restart: unless-stopped
+    env_file:
+      - './server.env'
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+      - 'HOSTNAME=https://$${HOST}'
+      - 'TZ=UTC'
+      - 'DATABASE_TYPE=${DATABASE_TYPE:-postgresql}'
+      - 'DATABASE_URL=${DATABASE_URL:-jdbc:postgresql://postgresql/bluerange?useServerPrepStmts=true}'
+      - 'DATABASE_USER=${DATABASE_USER:-bluerange}'
+      - 'DATABASE_PWD=${BLUERANGE_DATABASE_PASSWORD:-bluerange-database-pwd-change-me}'
+      - 'RELUTION_MONGODB_ENABLED=true'
+      - 'MONGO_DATABASE=bluerange'
+      - 'MONGO_HOST=mongodb'
+      - 'MONGO_PORT=27017'
+      - 'MONGO_USERNAME=bluerange'
+      - 'MONGO_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
+      - 'MONGO_AUTHENTICATION_DATABASE=admin'
+      - 'MQTT_ENABLED=true'
+      - 'MQTT_SERVER_URIS=ssl://$${HOST}:${PORT_TRAEFIK_MQTTS:-8883},wss://$${HOST}:${PORT_TRAEFIK_HTTPS:-443}'
+      # relaxed binding syntax to map to mqtt.internalServerURI
+      - 'MQTT_INTERNAL_SERVER_U_R_I=tcp://mosquitto:1883'
+      - 'MQTT_SEND_EVENTS_BY_MQTT=false'
+      - 'ORGA_NAME=iot'
+      - 'ORGA_FULLNAME=IOT'
+      - 'ORGA_ADMIN_USERNAME=admin'
+      - 'ORGA_ADMIN_GIVENNAME=IOT'
+      - 'ORGA_ADMIN_SURNAME=Administrator'
+      - 'ORGA_ADMIN_PASSWORD=${ORGA_ADMIN_PASSWORD:?>>> You need set a secure ORGA_ADMIN_PASSWORD in the server.env <<<}'
+      - 'SYSTEM_ADMIN_PASSWORD=${SYSTEM_ADMIN_PASSWORD:?>>> You need set a secure SYSTEM_ADMIN_PASSWORD in the server.env <<<}'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bluerange.rule=Host(`${HOST}`)
+      - traefik.http.routers.bluerange.entryPoints=websecure
+      - traefik.http.routers.bluerange.tls.certresolver=letsencrypt
+      - traefik.http.services.bluerange.loadbalancer.server.port=8080
+    ports:
+      - '${PORT_BLUERANGE_8080:-127.0.0.1:8080}:8080'
+      - '${PORT_BLUERANGE_8099:-127.0.0.1:8099}:8099'
+    expose:
+      - '7800'
+      - '8080'
+      - '8099'
+    image: bluerange/bluerange:${DOCKER_BLUERANGE:-latest}
+    volumes:
+      # mount folder of trusted CAs
+      # - './certs/anchors:/etc/pki/ca-trust/source/anchors:ro'
+      - './application.yml:/opt/relution/application.yml:ro'
+      - './templates:/opt/relution/templates:ro'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_BLUERANGE_LOGSIZE:-64m}'
+        max-file: '4'
+        compress: 'true'
+
+  mosquitto:
+    profiles:
+      - broker
+    restart: unless-stopped
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mosquitto-ws.rule=(Host(`${HOST}`) && (PathPrefix(`/mqtt`) || PathPrefix(`/ws`)))
+      - traefik.http.routers.mosquitto-ws.entryPoints=websecure
+      - traefik.http.routers.mosquitto-ws.service=mosquitto-ws
+      - traefik.http.routers.mosquitto-ws.tls.certresolver=letsencrypt
+      - traefik.http.services.mosquitto-ws.loadbalancer.server.port=8001
+      - traefik.tcp.routers.mosquitto-mqtt.rule=HostSNI(`${HOST}`)
+      - traefik.tcp.routers.mosquitto-mqtt.entryPoints=mqtts
+      - traefik.tcp.routers.mosquitto-mqtt.service=mosquitto-mqtt
+      - traefik.tcp.routers.mosquitto-mqtt.tls.certresolver=letsencrypt
+      - traefik.tcp.services.mosquitto-mqtt.loadbalancer.server.port=1883
+    ports:
+      - '${PORT_MOSQUITTO_MQTT:-127.0.0.1:1883}:1883'
+      - '${PORT_MOSQUITTO_WSS:-127.0.0.1:8001}:8001'
+    expose:
+      - '1883'
+      - '8001'
+    image: bluerange/bluerange-mosquitto:${DOCKER_MOSQUITTO:-latest}
+    volumes:
+      - './configs/mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro'
+    ulimits:
+      nofile: 100000
+      nproc: 100000
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MOSQUITTO_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
+
+  automate:
+    profiles:
+      - automate
+    restart: unless-stopped
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9123/actuator/health"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    ports:
+      - '${PORT_AUTOMATE:-127.0.0.1:9123}:9123'
+    expose:
+      - '9123'
+    image: harbor.mway.io/bluerange/bluerange-automate:latest
+    volumes:
+      - './configs/automate.json:/opt/config/default.json'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_AUTOMATE_LOGSIZE:-16m}'
+        max-file: '4'
+        compress: 'true'
+
+  postgresql:
+    profiles:
+      - postgresql
+    restart: unless-stopped
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+      - 'POSTGRES_PASSWORD=${BLUERANGE_DATABASE_PASSWORD:-bluerange-database-pwd-change-me}'
+      - 'POSTGRES_USER=bluerange'
+      - 'POSTGRES_DB=bluerange'
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username", "bluerange", "-d", "bluerange"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+    ports:
+      - '${PORT_POSTGRES:-127.0.0.1:5432}:5432'
+    expose:
+      - '5432'
+    image: postgres:17-alpine
+    volumes:
+      - 'postgresql:/var/lib/postgresql/data'
+      - './backup:/backup:rw'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_POSTGRESQL_LOGSIZE:-32m}'
+        max-file: '4'
+        compress: 'true'
+
+  database:
+    profiles:
+      - mariadb
+    restart: unless-stopped
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+      - 'MYSQL_PASSWORD=${BLUERANGE_DATABASE_PASSWORD:-bluerange-database-pwd-change-me}'
+      - 'MYSQL_USER=bluerange'
+      - 'MYSQL_DATABASE=bluerange'
+      - 'MYSQL_ROOT_PASSWORD=${ROOT_DATABASE_PWD:-root-database-pwd-change-me}'
+      - 'MARIADB_AUTO_UPGRADE=1'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u$MYSQL_USER", "-p$MYSQL_PASSWORD", "-hlocalhost"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    ports:
+      - '${PORT_MARIADB:-127.0.0.1:3306}:3306'
+    expose:
+      - '3306'
+    image: mariadb:${DOCKER_MARIADB:-latest}
+    volumes:
+      - './configs/database/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro'
+      - './configs/database/database.cnf:/etc/mysql/conf.d/database.cnf:ro'
+      - 'mysql:/var/lib/mysql:rw'
+      - './backup:/backup:rw'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MARIADB_LOGSIZE:-32m}'
+        max-file: '4'
+        compress: 'true'
+
+  mongodb:
+    profiles:
+      - mongodb
+    restart: unless-stopped
+    environment:
+      - 'BLUERANGE_COMPOSE_SH=${BLUERANGE_COMPOSE_SH:?>>> Use ./bluerange-compose.sh instead of docker-compose! <<<}'
+      - 'MONGO_INITDB_ROOT_USERNAME=bluerange'
+      - 'MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-bluerange-mongodb-pwd-change-me}'
+      - 'MONGO_INITDB_DATABASE=bluerange'
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --eval 'db.adminCommand(\"ping\")' || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+    ports:
+      - '${PORT_MONGO:-127.0.0.1:27017}:27017'
+    expose:
+      - '27017'
+    image: mongo:${DOCKER_MONGO:-latest}
+    volumes:
+      - 'mongodb:/data/db:rw'
+      - './backup:/backup:rw'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '${DOCKER_MONGO_LOGSIZE:-32m}'
+        max-file: '4'
+        compress: 'true'
+
+volumes:
+  mysql:
+  postgresql:
+  mongodb:

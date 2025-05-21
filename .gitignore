@@ -1,0 +1,5 @@
+.DS_Store
+/application.yml
+configs/automate.json
+docker-compose.override.yml
+server.env
