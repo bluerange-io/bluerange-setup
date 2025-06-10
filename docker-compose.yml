@@ -14,7 +14,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
-    image: traefik
+    image: traefik:${DOCKER_TRAEFIK:-latest}
     command:
       - --log.level=INFO
       - --api.insecure=true
@@ -156,7 +156,7 @@ services:
       - '${PORT_AUTOMATE:-127.0.0.1:9123}:9123'
     expose:
       - '9123'
-    image: harbor.mway.io/bluerange/bluerange-automate:latest
+    image: harbor.mway.io/bluerange/bluerange-automate:${DOCKER_AUTOMATE:-latest}
     volumes:
       - './configs/automate.json:/opt/config/default.json'
     logging:
@@ -185,7 +185,7 @@ services:
       - '${PORT_POSTGRES:-127.0.0.1:5432}:5432'
     expose:
       - '5432'
-    image: postgres:17-alpine
+    image: postgres:${DOCKER_POSTGRESQL:-17-alpine}
     volumes:
       - 'postgresql:/var/lib/postgresql/data'
       - './backup:/backup:rw'
