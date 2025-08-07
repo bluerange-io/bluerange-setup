@@ -71,22 +71,38 @@ SMTP_PASSWORD=XXXXXXXX
 
 ### HTTPS certificate
 
+#### Automatic generation
+
 The HTTPS certificate required may be generated using <https://letsencrypt.org/>.
 Please make sure to have a property DNS record set up for your workstation.
 
 Certificates are obtained by the [Traefik](https://traefik.io/traefik/) container. To enable it, choose one of the supported challenges: `TLS-ALPN-01` `HTTP-01` or `DNS-01` and check the [detailed documentation](https://doc.traefik.io/traefik/https/acme/) for the needed parameter.
 
-Add the traefik static config in the CLI syntax to the `docker-compose.override.yml` like:
+Copy the command array from the [docker-compose.yml](docker-compose.yml) into the `docker-compose.override.yml` and add the traefik static config in the CLI syntax to it like:
 
 ```yaml
 services:
   traefik:
     command:
+      - ...
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=manual
       ### for testing purpose the let's encrypt stating environment can be activated
       # - --certificatesresolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
       ### any configuration from the docker-compose.yml can be overridden
       # - --log.level=DEBUG
+```
+
+#### Static provisioning
+
+If a manually created certificate should be used instead, the files need to be places into the [certs/static](certs/static/) folder and traefik needs to be configured using the `dynamic.yml` inside [configs/traefik/](configs/traefik/).
+
+Inside of the traefik container, the certificates will be mounted at `/opt/certs/`.
+
+```
+tls:
+  certificates:
+    - certFile: /opt/certs/<certificate-filename>
+      keyFile: /opt/certs/<certificate-key-filename>
 ```
 
 ### Optional configuration

@@ -22,6 +22,7 @@ services:
       - --ping=true
       - --providers.docker.exposedByDefault=false
       - --providers.docker.watch=true
+      - --providers.file.directory=/opt/traefik/
       - --entryPoints.web.address=:80
       - --entryPoints.web.http.redirections.entryPoint.to=websecure
       - --entryPoints.web.http.redirections.entryPoint.scheme=https
@@ -33,9 +34,11 @@ services:
       - '${PORT_TRAEFIK_HTTP:-80}:80'
       - '${PORT_TRAEFIK_HTTPS:-443}:443'
       - '${PORT_TRAEFIK_MQTTS:-8883}:8883'
-      - '${PORT_TRAEFIK_TRAEFIK:-127.0.0.1:8080}:8080'
+      - '${PORT_TRAEFIK_TRAEFIK:-127.0.0.1:7080}:8080'
     volumes:
       - ./certs/letsencrypt:/letsencrypt
+      - ./certs/static:/opt/certs
+      - ./configs/traefik:/opt/traefik
       - /var/run/docker.sock:/var/run/docker.sock
     logging:
       driver: 'json-file'

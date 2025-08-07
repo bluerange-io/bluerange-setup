@@ -17,6 +17,13 @@ if [ ! -f ./application.yml ] ; then
 EOF
 fi
 
+if [ ! -f ./configs/traefik/dynamic.yml ] ; then
+  cat > configs/traefik/dynamic.yml << EOF
+# dynamic configuration for traefik goes here
+
+EOF
+fi
+
 # due to compatibility reasons (use former BlueRange DB password variable 'DATABASE_PWD' if set)
 if [ ! -z "$DATABASE_PWD" ] ; then
   export BLUERANGE_DATABASE_PASSWORD=${DATABASE_PWD}
@@ -25,7 +32,7 @@ fi
 
 set +a
 if [ -z "$HOST" ] ; then
-  echo "server.env not found!"
+  echo "HOST environment variable not found!"
   echo ""
   echo "Please follow instructions given in README.md for setting up your environment."
   exit 1
