@@ -74,7 +74,7 @@ services:
       - 'MQTT_INTERNAL_SERVER_U_R_I=tcp://mosquitto:1883'
       - 'ORGA_NAME=iot'
       - 'ORGA_FULLNAME=IOT'
-      - 'ORGA_ADMIN_USERNAME=admin'
+      - 'ORGA_ADMIN_USERNAME=iotadmin'
       - 'ORGA_ADMIN_GIVENNAME=IOT'
       - 'ORGA_ADMIN_SURNAME=Administrator'
       - 'ORGA_ADMIN_PASSWORD=${ORGA_ADMIN_PASSWORD:?>>> You need set a secure ORGA_ADMIN_PASSWORD in the server.env <<<}'
