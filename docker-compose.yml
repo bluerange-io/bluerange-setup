@@ -92,6 +92,9 @@ services:
       - '7800'
       - '8080'
       - '8099'
+    healthcheck:
+      interval: 15s
+      timeout: 10s
     image: bluerange/bluerange:${DOCKER_BLUERANGE:-latest}
     volumes:
       # mount folder of trusted CAs
