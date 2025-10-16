@@ -14,8 +14,8 @@ Ensure you created a backup of the database using the `bluerange-backup.sh`.
 ## Prepare PostgreSQL
 
 1. Switch the database configuration in the Server configuration to the PostgreSQL.
-1. Start the Server once, to let it create the database schema
-1. Stop the Server again before proceeding with the migration
+1. Start the Server once with the additional environment variable `RELUTION_ARGUMENTS=--database-migration-only`, to let it create the database schema (it'll stop automatically afterwards)
+1. Make sure no Server runs before proceeding with the migration
 
 ## pgloader script
 
@@ -43,4 +43,23 @@ docker run --network bluerange_default -it dimitri/pgloader:latest bash
 # paste script above into a file called: migration.load
 # then run
 pgloader migration.load
+```
+### Troubleshoot
+
+In case pgloader crashes with the error `Heap exhausted`, check the database, if there are resources with in DB data greater that ~50MB.
+
+```
+SELECT
+	uuid,
+	name,
+	type,
+	size,
+	modification_date
+FROM
+	resource
+	where size > 50000000
+ORDER BY
+	size desc, modification_date asc
+LIMIT
+	100;
 ```
