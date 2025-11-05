@@ -161,9 +161,9 @@ services:
       - '${PORT_AUTOMATE:-127.0.0.1:9123}:9123'
     expose:
       - '9123'
-    image: harbor.mway.io/bluerange/bluerange-automate:${DOCKER_AUTOMATE:-latest}
+    image: harbor.mway.io/bluerange/bluerange-automate:${DOCKER_AUTOMATE:-production}
     volumes:
-      - './configs/automate.json:/opt/config/default.json'
+      - './configs/automate.json:/opt/automate/config/default.json'
     logging:
       driver: 'json-file'
       options:
