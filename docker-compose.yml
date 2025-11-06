@@ -132,6 +132,9 @@ services:
     expose:
       - '1883'
       - '8001'
+    healthcheck:
+      interval: 15s
+      timeout: 10s
     image: bluerange/bluerange-mosquitto:${DOCKER_MOSQUITTO:-latest}
     volumes:
       - './configs/mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro'
